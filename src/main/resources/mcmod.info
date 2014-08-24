@@ -1,0 +1,21 @@
+[
+{
+  "modid": "ZapApples",
+  "name": "Zap Apples",
+  "description": "Based on the My Little Pony television show, this mod brings Zap Apples into the world of Minecraft.",
+  "version": "2.2beta",
+  "mcversion": "1.6.4",
+  "url": "http://minecraft.curseforge.com/mc-mods/zap-apple-mod/",
+  "updateUrl": "",
+  "authors": [
+	"ChioriGreene"
+  ],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]
