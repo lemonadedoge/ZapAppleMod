@@ -1,17 +1,18 @@
 package com.chiorichan.ZapApples.entity;
 
-import net.minecraft.src.EntityFallingSand;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.world.World;
 
-public class EntityFallingFlour extends EntityFallingSand
+public class EntityFallingFlour extends EntityFallingBlock
 {
-  public EntityFallingFlour(World world)
-  {
-    super(world);
-  }
-
-  public EntityFallingFlour(World world, double x, double y, double z, int blockID, int blockMeta)
-  {
-    super(world, x, y, z, blockID, blockMeta);
-  }
+	public EntityFallingFlour(World world)
+	{
+		super( world );
+	}
+	
+	public EntityFallingFlour(World world, double x, double y, double z, Block block, int blockMeta)
+	{
+		super( world, x, y, z, block, blockMeta );
+	}
 }
