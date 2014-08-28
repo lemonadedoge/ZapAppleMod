@@ -4,3 +4,9 @@
 /.settings
 /bin
 /eclipse
+config/
+/eula.txt
+/logs
+/options.txt
+/saves
+/server.properties

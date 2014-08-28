@@ -28,7 +28,7 @@ public class BlockZapAppleSapling extends BlockFlower
 		setCreativeTab( CreativeTabs.tabDecorations );
 		setHardness( 0.0F );
 		setStepSound( Block.soundTypeGrass );
-		// setUnlocalizedName("zapAppleSapling");
+		setBlockName("zapAppleSapling");
 	}
 	
 	@Override

@@ -4,11 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 import com.chiorichan.ZapApples.ZapApples;
-import com.chiorichan.ZapApples.util.BlockDictionary;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -25,7 +25,7 @@ public class BlockFlour extends BlockFalling
 		setCreativeTab( CreativeTabs.tabFood );
 		setHardness( 0.5F );
 		setStepSound( Block.soundTypeSand );
-		//setUnlocalizedName( "flour" );
+		setBlockName( "flour" );
 	}
 	
 	public void onBlockAdded( World world, int x, int y, int z )
@@ -49,7 +49,7 @@ public class BlockFlour extends BlockFalling
 	protected boolean adjacentWater( World world, int x, int y, int z )
 	{
 		Block b = world.getBlock( x, y, z );
-		return ( b == BlockDictionary.water.getBlock() ) || ( b == BlockDictionary.waterStill.getBlock() );
+		return ( b == Blocks.water );
 	}
 	
 	public IIcon getIcon( int side, int meta )

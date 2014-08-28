@@ -15,7 +15,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 
-import com.chiorichan.ZapApples.util.BlockDictionary;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.relauncher.Side;
@@ -33,7 +32,7 @@ public class BlockZapAppleFlowers extends Block implements IShearable
 		setCreativeTab( CreativeTabs.tabDecorations );
 		setHardness( 0.2F );
 		setStepSound( Block.soundTypeGrass );
-		//setUnlocalizedName( "zapAppleFlowers" );
+		setBlockName( "zapAppleFlowers" );
 	}
 	
 	public IIcon getIcon( int side, int meta )
@@ -202,7 +201,7 @@ public class BlockZapAppleFlowers extends Block implements IShearable
 		if ( ( !world.isRemote ) && ( !canFlowerStay( world, x, y, z ) ) )
 		{
 			dropBlockAsItem( world, x, y, z, world.getBlockMetadata( x, y, z ), 0 );
-			world.setBlock( x, y, z, BlockDictionary.air.getBlock(), 0, 0 );
+			world.setBlockToAir( x, y, z );
 		}
 	}
 	

@@ -45,7 +45,7 @@ public class BlockCake extends BlockContainer
 		setCreativeTab( CreativeTabs.tabFood );
 		setHardness( 0.5F );
 		setStepSound( Block.soundTypeCloth );
-		// setUnlocalizedName( "zapplePie" );
+		setBlockName( "zapplePie" );
 	}
 	
 	public void registerBaseOption( String key, String title, ItemStack activator )

@@ -35,7 +35,7 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 		setHardness( 0.2F );
 		setLightOpacity( 1 );
 		setStepSound( Block.soundTypeGrass );
-		// setUnlocalizedName("zapAppleLeaves");
+		setBlockName("zapAppleLeaves");
 	}
 	
 	public IIcon getIcon( int side, int meta )

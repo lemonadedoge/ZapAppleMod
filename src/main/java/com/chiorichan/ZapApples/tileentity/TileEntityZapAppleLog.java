@@ -5,15 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.effect.EntityLightningBolt;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 import com.chiorichan.ZapApples.OrderedTriple;
 import com.chiorichan.ZapApples.ZapApples;
 import com.chiorichan.ZapApples.events.DaytimeManager;
 import com.chiorichan.ZapApples.network.PacketHandler;
-import com.chiorichan.ZapApples.util.BlockDictionary;
+import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -82,7 +87,7 @@ public class TileEntityZapAppleLog extends TileEntity
 				else
 				{
 					OrderedTriple pos = (OrderedTriple) leafCopy.get( index++ );
-					if ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.air.getBlock() ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.snow.getBlock() ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.leaves.getBlock() ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.vine.getBlock() ) )
+					if ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) )
 					{
 						if ( ( ZapApples.lightningEffect ) && ( rand.nextInt( 20 ) == 1 ) )
 						{
@@ -111,7 +116,7 @@ public class TileEntityZapAppleLog extends TileEntity
 				else
 				{
 					OrderedTriple pos = (OrderedTriple) appleCopy.get( index++ );
-					if ( ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.air.getBlock() ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.snow.getBlock() ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.leaves.getBlock() ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == BlockDictionary.vine.getBlock() ) ) && ( ZapApples.zapAppleFlowers.canPlaceBlockOnSide( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue() ) ) )
+					if ( ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) ) && ( ZapApples.zapAppleFlowers.canPlaceBlockOnSide( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue() ) ) )
 					{
 						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers );
 						ZapApples.zapAppleFlowers.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
@@ -137,7 +142,7 @@ public class TileEntityZapAppleLog extends TileEntity
 					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleFlowers )
 					{
 						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple );
-						PacketHandler.sendDestroyEffectToPlayers( worldObj.playerEntities, pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers, 0 );
+						PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers, 0 ), worldObj.provider.dimensionId );
 						ZapApples.grayApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 					}
 				}
@@ -168,7 +173,7 @@ public class TileEntityZapAppleLog extends TileEntity
 					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.grayApple )
 					{
 						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapApple, 0, 2 );
-						PacketHandler.sendDestroyEffectToPlayers( worldObj.playerEntities, pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple, 0 );
+						PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple, 0 ), worldObj.provider.dimensionId );
 						ZapApples.zapApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 						if ( rand.nextBoolean() )
 						{
@@ -278,5 +283,25 @@ public class TileEntityZapAppleLog extends TileEntity
 			}
 			tag.setTag( "apples", apples );
 		}
+	}
+	
+	@Override
+	public Packet getDescriptionPacket()
+	{
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT( tag );
+		return new S35PacketUpdateTileEntity( xCoord, yCoord, zCoord, 0, tag );
+	}
+	
+	@Override
+	public void onDataPacket( NetworkManager net, S35PacketUpdateTileEntity pkt )
+	{
+		readFromNBT( pkt.func_148857_g() );
+		markForUpdate();
+	}
+	
+	public void markForUpdate()
+	{
+		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
 	}
 }

@@ -2,7 +2,9 @@ package com.chiorichan.ZapApples.tileentity;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityCake extends TileEntity
@@ -17,7 +19,7 @@ public class TileEntityCake extends TileEntity
 		player.getFoodStats().addStats( 5, 0.5F );
 		if ( stage + 1 >= 6 )
 		{
-			getBlockType().breakBlock( worldObj, xCoord, yCoord, zCoord, 0, getBlockMetadata() );
+			//getBlockType().breakBlock( worldObj, xCoord, yCoord, zCoord, 0, getBlockMetadata() );
 			worldObj.setBlockToAir( xCoord, yCoord, zCoord );
 		}
 		else
@@ -43,19 +45,24 @@ public class TileEntityCake extends TileEntity
 		}
 	}
 	
+	@Override
 	public Packet getDescriptionPacket()
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT( tag );
-		Packet packet = new C17TileEntityData( xCoord, yCoord, zCoord, 1, tag );
-		packet.isChunkDataPacket = true;
-		return packet;
+		return new S35PacketUpdateTileEntity( xCoord, yCoord, zCoord, 0, tag );
 	}
 	
-	public void onDataPacket( INetworkManager net, Packet132TileEntityData packet )
+	@Override
+	public void onDataPacket( NetworkManager net, S35PacketUpdateTileEntity pkt )
 	{
-		worldObj.getBlockTileEntity( xCoord, yCoord, zCoord ).readFromNBT( packet.data );
-		worldObj.markBlockForRenderUpdate( xCoord, yCoord, zCoord );
+		readFromNBT( pkt.func_148857_g() );
+		markForUpdate();
+	}
+	
+	public void markForUpdate()
+	{
+		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
 	}
 	
 	public void readFromNBT( NBTTagCompound tag )

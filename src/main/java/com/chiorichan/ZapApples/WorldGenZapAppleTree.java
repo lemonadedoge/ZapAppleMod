@@ -3,13 +3,13 @@ package com.chiorichan.ZapApples;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.chiorichan.ZapApples.tileentity.TileEntityZapAppleLog;
-import com.chiorichan.ZapApples.util.BlockDictionary;
 
 public class WorldGenZapAppleTree extends WorldGenerator
 {
@@ -94,12 +94,13 @@ public class WorldGenZapAppleTree extends WorldGenerator
 	
 	int checkBlockLine( int[] par1ArrayOfInteger, int[] par2ArrayOfInteger )
 	{
-		int[] var3 = { 0, 0, 0 };
+		int[] var3 = new int[] { 0, 0, 0 };
 		byte var4 = 0;
+		byte var5;
 		
-		for ( byte var5 = 0; var4 < 3; var4 = (byte) ( var4 + 1 ) )
+		for ( var5 = 0; var4 < 3; ++var4 )
 		{
-			par2ArrayOfInteger[var4] -= par1ArrayOfInteger[var4];
+			var3[var4] = par2ArrayOfInteger[var4] - par1ArrayOfInteger[var4];
 			
 			if ( Math.abs( var3[var4] ) > Math.abs( var3[var5] ) )
 			{
@@ -111,39 +112,42 @@ public class WorldGenZapAppleTree extends WorldGenerator
 		{
 			return -1;
 		}
-		
-		byte var6 = otherCoordPairs[var5];
-		byte var7 = otherCoordPairs[( var5 + 3 )];
-		byte var8;
-		byte var8;
-		if ( var3[var5] > 0 )
-		{
-			var8 = 1;
-		}
 		else
 		{
-			var8 = -1;
-		}
-		
-		double var9 = var3[var6] / var3[var5];
-		double var11 = var3[var7] / var3[var5];
-		int[] var13 = { 0, 0, 0 };
-		Block var14 = BlockDictionary.air.getBlock();
-		
-		for ( int var15 = var3[var5] + var8; var14 != var15; var14 += var8 )
-		{
-			par1ArrayOfInteger[var5] += var14;
-			var13[var6] = MathHelper.floor_double( par1ArrayOfInteger[var6] + var14 * var9 );
-			var13[var7] = MathHelper.floor_double( par1ArrayOfInteger[var7] + var14 * var11 );
-			Block var16 = worldObj.getBlock( var13[0], var13[1], var13[2] );
+			byte var6 = otherCoordPairs[var5];
+			byte var7 = otherCoordPairs[var5 + 3];
+			byte var8;
 			
-			if ( ( var16 != Block.getBlockById( 0 ) ) && ( ( var14 != BlockDictionary.leaves.getBlock() ) || ( var14 != ZapApples.zapAppleLeaves ) || ( var14 == BlockDictionary.snow.getBlock() ) ) || ( var14 == BlockDictionary.vine.getBlock() ) ) ) )
+			if ( var3[var5] > 0 )
 			{
-				break;
+				var8 = 1;
 			}
+			else
+			{
+				var8 = -1;
+			}
+			
+			double var9 = (double) var3[var6] / (double) var3[var5];
+			double var11 = (double) var3[var7] / (double) var3[var5];
+			int[] var13 = new int[] { 0, 0, 0 };
+			int var14 = 0;
+			int var15;
+			
+			for ( var15 = var3[var5] + var8; var14 != var15; var14 += var8 )
+			{
+				var13[var5] = par1ArrayOfInteger[var5] + var14;
+				var13[var6] = MathHelper.floor_double( (double) par1ArrayOfInteger[var6] + (double) var14 * var9 );
+				var13[var7] = MathHelper.floor_double( (double) par1ArrayOfInteger[var7] + (double) var14 * var11 );
+				Block var16 = this.worldObj.getBlock( var13[0], var13[1], var13[2] );
+				
+				if ( var16 != Blocks.air && ( var14 != Block.getIdFromBlock( Blocks.leaves ) || var14 != Block.getIdFromBlock( ZapApples.zapAppleLeaves ) || var14 == Block.getIdFromBlock( Blocks.snow ) || var14 == Block.getIdFromBlock( Blocks.vine ) ) )
+				{
+					break;
+				}
+			}
+			
+			return var14 == var15 ? -1 : Math.abs( var14 );
 		}
-		
-		return var14 == var15 ? -1 : Math.abs( var14 );
 	}
 	
 	void generateLeafNodeList()
@@ -356,12 +360,13 @@ public class WorldGenZapAppleTree extends WorldGenerator
 	
 	void placeBlockLine( int[] par1ArrayOfInteger, int[] par2ArrayOfInteger )
 	{
-		int[] var4 = { 0, 0, 0 };
+		int[] var4 = new int[] { 0, 0, 0 };
 		byte var5 = 0;
+		byte var6;
 		
-		for ( byte var6 = 0; var5 < 3; var5 = (byte) ( var5 + 1 ) )
+		for ( var6 = 0; var5 < 3; ++var5 )
 		{
-			par2ArrayOfInteger[var5] -= par1ArrayOfInteger[var5];
+			var4[var5] = par2ArrayOfInteger[var5] - par1ArrayOfInteger[var5];
 			
 			if ( Math.abs( var4[var5] ) > Math.abs( var4[var6] ) )
 			{
@@ -372,9 +377,9 @@ public class WorldGenZapAppleTree extends WorldGenerator
 		if ( var4[var6] != 0 )
 		{
 			byte var7 = otherCoordPairs[var6];
-			byte var8 = otherCoordPairs[( var6 + 3 )];
+			byte var8 = otherCoordPairs[var6 + 3];
 			byte var9;
-			byte var9;
+			
 			if ( var4[var6] > 0 )
 			{
 				var9 = 1;
@@ -384,17 +389,17 @@ public class WorldGenZapAppleTree extends WorldGenerator
 				var9 = -1;
 			}
 			
-			double var10 = var4[var7] / var4[var6];
-			double var12 = var4[var8] / var4[var6];
-			int[] var14 = { 0, 0, 0 };
+			double var10 = (double) var4[var7] / (double) var4[var6];
+			double var12 = (double) var4[var8] / (double) var4[var6];
+			int[] var14 = new int[] { 0, 0, 0 };
 			int var15 = 0;
 			
 			for ( int var16 = var4[var6] + var9; var15 != var16; var15 += var9 )
 			{
-				var14[var6] = MathHelper.floor_double( par1ArrayOfInteger[var6] + var15 + 0.5D );
-				var14[var7] = MathHelper.floor_double( par1ArrayOfInteger[var7] + var15 * var10 + 0.5D );
-				var14[var8] = MathHelper.floor_double( par1ArrayOfInteger[var8] + var15 * var12 + 0.5D );
-				int var17 = 0;
+				var14[var6] = MathHelper.floor_double( (double) ( par1ArrayOfInteger[var6] + var15 ) + 0.5D );
+				var14[var7] = MathHelper.floor_double( (double) par1ArrayOfInteger[var7] + (double) var15 * var10 + 0.5D );
+				var14[var8] = MathHelper.floor_double( (double) par1ArrayOfInteger[var8] + (double) var15 * var12 + 0.5D );
+				byte var17 = 0;
 				int var18 = Math.abs( var14[0] - par1ArrayOfInteger[0] );
 				int var19 = Math.abs( var14[2] - par1ArrayOfInteger[2] );
 				int var20 = Math.max( var18, var19 );
@@ -411,7 +416,7 @@ public class WorldGenZapAppleTree extends WorldGenerator
 					}
 				}
 				tile.leafPositions.remove( new OrderedTriple( var14[0], var14[1], var14[2] ) );
-				worldObj.setBlock( var14[0], var14[1], var14[2], ZapApples.zapAppleLog, var17, 1 );
+				this.setBlockAndNotifyAdequately( this.worldObj, var14[0], var14[1], var14[2], ZapApples.zapAppleLog, var17 );
 			}
 		}
 	}

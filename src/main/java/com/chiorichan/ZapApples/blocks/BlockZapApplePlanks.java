@@ -25,7 +25,7 @@ public class BlockZapApplePlanks extends Block
 		setHardness( 2.0F );
 		setResistance( 5.0F );
 		setStepSound( Block.soundTypeWood );
-		//setUnlocalizedName( "wood" );
+		setBlockName( "wood" );
 	}
 	
 	@SideOnly( Side.CLIENT )

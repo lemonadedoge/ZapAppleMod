@@ -32,7 +32,7 @@ public class BlockGrayApple extends Block
 		setResistance( 6000000.0F );
 		setCreativeTab( CreativeTabs.tabFood );
 		setStepSound( Block.soundTypeGrass );
-		//setUnlocalizedName( "grayApple" );
+		setBlockName( "grayApple" );
 		
 		float var12 = 0.3F;
 		setBlockBounds( var12, 0.25F, var12, 1.0F - var12, 0.75F, 1.0F - var12 );

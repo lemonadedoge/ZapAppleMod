@@ -3,10 +3,8 @@ package com.chiorichan.ZapApples.items;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
-
-import com.chiorichan.ZapApples.util.ItemDictionary;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -23,7 +21,7 @@ public class ItemFluidBucket extends ItemBucket
 		setCreativeTab( CreativeTabs.tabMisc );
 		setUnlocalizedName( unlocalizedName );
 		
-		setContainerItem( ItemDictionary.bucketEmpty.getItem() );
+		setContainerItem( Items.bucket );
 	}
 	
 	@SideOnly( Side.CLIENT )

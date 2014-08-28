@@ -21,7 +21,7 @@ public class BlockZapApple extends BlockGrayApple
 		setResistance( 0.0F );
 		setHardness( 0.1F );
 		setStepSound( Block.soundTypeGrass );
-		//setUnlocalizedName( "zapApple" );
+		setBlockName( "zapApple" );
 	}
 	
 	public IIcon getIcon( int side, int meta )

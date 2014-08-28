@@ -31,7 +31,7 @@ public class BlockZapAppleJam extends BlockFluidClassic
 	{
 		super( fluid, material );
 		setCreativeTab( CreativeTabs.tabMisc );
-		//c( "zapapplejam" );
+		setBlockName( "zapapplejam" );
 	}
 	
 	public IIcon a( int side, int meta )

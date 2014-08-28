@@ -46,7 +46,7 @@ public class BlockJar extends BlockContainer
 		setHardness( 0.5F );
 		setCreativeTab( CreativeTabs.tabMisc );
 		setStepSound( Block.soundTypeGlass );
-		//setUnlocalizedName( "jar" );
+		setBlockName( "jar" );
 	}
 	
 	public boolean renderAsNormalBlock()

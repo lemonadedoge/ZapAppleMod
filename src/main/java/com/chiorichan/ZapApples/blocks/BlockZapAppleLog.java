@@ -31,7 +31,7 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 		setCreativeTab( CreativeTabs.tabBlock );
 		setHardness( 2.0F );
 		setStepSound( Block.soundTypeWood );
-		// setUnlocalizedName( "zapAppleLog" );
+		setBlockName( "zapAppleLog" );
 	}
 	
 	public int getRenderType()

@@ -26,7 +26,7 @@ public class BlockDoughFluid extends BlockFluidClassic
 	{
 		super( fluid, material );
 		setCreativeTab( CreativeTabs.tabMisc );
-		//c( "doughfluid" );
+		setBlockName( "doughfluid" );
 	}
 	
 	public IIcon getIcon( int side, int meta )

@@ -25,7 +25,7 @@ public class BlockPie extends BlockContainer
 		setCreativeTab( CreativeTabs.tabFood );
 		setHardness( 0.5F );
 		setStepSound( Block.soundTypeCloth );
-		//setUnlocalizedName( "zapplePie" );
+		setBlockName( "zapplePie" );
 	}
 	
 	public void setBlockBoundsBasedOnState( IBlockAccess world, int x, int y, int z )

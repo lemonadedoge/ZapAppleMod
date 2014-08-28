@@ -1,7 +1,9 @@
 package com.chiorichan.ZapApples.tileentity;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -16,7 +18,7 @@ public class TileEntityPie extends TileEntity
 		player.getFoodStats().addStats( 5, 0.5F );
 		if ( stage + 1 >= 4 )
 		{
-			getBlockType().breakBlock( worldObj, xCoord, yCoord, zCoord, 0, getBlockMetadata() );
+			getBlockType().breakBlock( worldObj, xCoord, yCoord, zCoord, Blocks.air, getBlockMetadata() );
 			worldObj.setBlockToAir( xCoord, yCoord, zCoord );
 		}
 		else
@@ -31,6 +33,7 @@ public class TileEntityPie extends TileEntity
 		hasUpdate = true;
 	}
 	
+	@Override
 	public void updateEntity()
 	{
 		if ( ( !worldObj.isRemote ) && ( hasUpdate ) )
@@ -40,21 +43,27 @@ public class TileEntityPie extends TileEntity
 		}
 	}
 	
+	@Override
 	public Packet getDescriptionPacket()
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 		writeToNBT( tag );
-		Packet packet = new S35PacketUpdateTileEntity( xCoord, yCoord, zCoord, 1, tag );
-		packet.isChunkDataPacket = true;
-		return packet;
+		return new S35PacketUpdateTileEntity( xCoord, yCoord, zCoord, 0, tag );
 	}
 	
-	public void onDataPacket( INetworkManager net, S35PacketUpdateTileEntity packet )
+	@Override
+	public void onDataPacket( NetworkManager net, S35PacketUpdateTileEntity pkt )
 	{
-		worldObj.getTileEntity( xCoord, yCoord, zCoord ).readFromNBT( packet );
-		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord ); // RenderUpdate
+		readFromNBT( pkt.func_148857_g() );
+		markForUpdate();
 	}
 	
+	public void markForUpdate()
+	{
+		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
+	}
+	
+	@Override
 	public void readFromNBT( NBTTagCompound tag )
 	{
 		super.readFromNBT( tag );
@@ -62,6 +71,7 @@ public class TileEntityPie extends TileEntity
 		stage = tag.getShort( "stage" );
 	}
 	
+	@Override
 	public void writeToNBT( NBTTagCompound tag )
 	{
 		super.writeToNBT( tag );

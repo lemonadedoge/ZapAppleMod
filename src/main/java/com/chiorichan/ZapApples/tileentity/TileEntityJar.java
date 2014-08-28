@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import javax.swing.Icon;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -281,16 +279,24 @@ public class TileEntityJar extends TileEntity implements IFluidHandler
 		return tank.getInfo();
 	}
 	
+	@Override
 	public Packet getDescriptionPacket()
 	{
-		NBTTagCompound tileTag = new NBTTagCompound();
-		writeToNBT( tileTag );
-		return new S35PacketUpdateTileEntity( xCoord, yCoord, zCoord, 0, tileTag );
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT( tag );
+		return new S35PacketUpdateTileEntity( xCoord, yCoord, zCoord, 0, tag );
 	}
 	
+	@Override
 	public void onDataPacket( NetworkManager net, S35PacketUpdateTileEntity pkt )
 	{
-		readFromNBT( pkt );
+		readFromNBT( pkt.func_148857_g() );
+		markForUpdate();
+	}
+	
+	public void markForUpdate()
+	{
+		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
 	}
 	
 	public IIcon getFluidTexture()
