@@ -21,6 +21,7 @@ public class RenderCake implements ISimpleBlockRenderingHandler
 		RenderingRegistry.registerBlockHandler( this );
 	}
 	
+	@Override
 	public void renderInventoryBlock( Block block, int metadata, int modelID, RenderBlocks renderer )
 	{
 		if ( block == ZapApples.cake )
@@ -55,6 +56,7 @@ public class RenderCake implements ISimpleBlockRenderingHandler
 		}
 	}
 	
+	@Override
 	public boolean renderWorldBlock( IBlockAccess world, int x, int y, int z, Block block, int modelID, RenderBlocks renderer )
 	{
 		if ( modelID == getRenderId() )
@@ -99,11 +101,13 @@ public class RenderCake implements ISimpleBlockRenderingHandler
 		}
 	}
 	
+	@Override
 	public boolean shouldRender3DInInventory( int arg0 )
 	{
 		return true;
 	}
 	
+	@Override
 	public int getRenderId()
 	{
 		return ZapApples.idRenderCake;

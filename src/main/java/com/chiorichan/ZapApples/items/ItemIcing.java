@@ -8,6 +8,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
+
+import com.chiorichan.ZapApples.ZapApples;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -24,12 +27,14 @@ public class ItemIcing extends Item
 		setUnlocalizedName( "icing" );
 	}
 	
+	@Override
 	public int getMetadata( int meta )
 	{
 		return MathHelper.clamp_int( meta, 0, 15 );
 	}
 	
-	public void getSubItems( int par1, CreativeTabs par2CreativeTabs, List itemList )
+	@Override
+	public void getSubItems( Item par1, CreativeTabs par2CreativeTabs, List itemList )
 	{
 		for ( int i = 0; i < 16; i++ )
 		{
@@ -37,12 +42,21 @@ public class ItemIcing extends Item
 		}
 	}
 	
-	public String getItemDisplayName( ItemStack stack )
+	@Override
+	public String getItemStackDisplayName( ItemStack stack )
 	{
 		int meta = stack.getItemDamage();
-		return com.chiorichan.ZapApples.ZapApples.icings[meta] + " Icing";
+		return ZapApples.icings[meta] + " Icing";
 	}
 	
+	@Override
+	public String getUnlocalizedName( ItemStack stack )
+	{
+		int meta = stack.getItemDamage();
+		return ZapApples.icings[meta].toLowerCase().replace( " ", "_" );
+	}
+	
+	@Override
 	@SideOnly( Side.CLIENT )
 	public void registerIcons( IIconRegister register )
 	{
@@ -52,6 +66,7 @@ public class ItemIcing extends Item
 		}
 	}
 	
+	@Override
 	public IIcon getIconFromDamage( int par1 )
 	{
 		if ( par1 > 15 )

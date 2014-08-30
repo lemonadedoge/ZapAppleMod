@@ -13,8 +13,10 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
@@ -23,10 +25,12 @@ import net.minecraft.world.World;
 
 import com.chiorichan.ZapApples.ZapApples;
 import com.chiorichan.ZapApples.tileentity.TileEntityCake;
+import com.chiorichan.ZapApples.tileentity.TileEntityJar;
 import com.chiorichan.ZapApples.util.InventoryUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -45,7 +49,7 @@ public class BlockCake extends BlockContainer
 		setCreativeTab( CreativeTabs.tabFood );
 		setHardness( 0.5F );
 		setStepSound( Block.soundTypeCloth );
-		setBlockName( "zapplePie" );
+		setBlockName( "zapAppleCake" );
 	}
 	
 	public void registerBaseOption( String key, String title, ItemStack activator )
@@ -66,16 +70,19 @@ public class BlockCake extends BlockContainer
 		frostIngredients.put( key, new CakeIngredientMap( key, title, activator ) );
 	}
 	
+	@Override
 	public boolean isOpaqueCube()
 	{
 		return false;
 	}
 	
+	@Override
 	public boolean renderAsNormalBlock()
 	{
 		return false;
 	}
 	
+	@Override
 	public void setBlockBoundsBasedOnState( IBlockAccess world, int x, int y, int z )
 	{
 		TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
@@ -91,12 +98,14 @@ public class BlockCake extends BlockContainer
 		}
 	}
 	
+	@Override
 	public void setBlockBoundsForItemRender()
 	{
 		float slice = 0.0625F;
 		setBlockBounds( slice, 0.0F, slice, 1.0F - slice, 0.5F, 1.0F - slice );
 	}
 	
+	@Override
 	public boolean onBlockActivated( World world, int x, int y, int z, EntityPlayer player, int side, float par7, float par8, float par9 )
 	{
 		ItemStack current = player.inventory.getCurrentItem();
@@ -109,7 +118,9 @@ public class BlockCake extends BlockContainer
 				{
 					CakeIngredientMap val = (CakeIngredientMap) ent.getValue();
 					
-					if ( ( val.activator != null ) && ( current == val.activator ) && ( current.getItemDamage() == val.activator.getItemDamage() ) )
+					FMLLog.info( current + " <> " + val.activator );
+					
+					if ( ( val.activator != null ) && ( current.getItem() == val.activator.getItem() ) && current.getItemDamage() == val.activator.getItemDamage() )
 					{
 						TileEntityCake cake = (TileEntityCake) world.getTileEntity( x, y, z );
 						
@@ -137,6 +148,7 @@ public class BlockCake extends BlockContainer
 		return true;
 	}
 	
+	@Override
 	public void onBlockClicked( World world, int x, int y, int z, EntityPlayer player )
 	{
 		if ( !world.isRemote )
@@ -157,17 +169,20 @@ public class BlockCake extends BlockContainer
 		}
 	}
 	
+	@Override
 	public boolean canPlaceBlockAt( World world, int x, int y, int z )
 	{
 		return !super.canPlaceBlockAt( world, x, y, z ) ? false : canBlockStay( world, x, y, z );
 	}
 	
+	@Override
 	public boolean canBlockStay( World world, int x, int y, int z )
 	{
-		return world.getBlock( x, y, z ).getMaterial().isSolid();
+		return world.getBlock( x, y - 1, z ).getMaterial().isSolid();
 	}
 	
-	public void onNeighborBlockChange( World world, int x, int y, int z, int meta )
+	@Override
+	public void onNeighborBlockChange( World world, int x, int y, int z, Block block )
 	{
 		if ( !canBlockStay( world, x, y, z ) )
 		{
@@ -176,11 +191,13 @@ public class BlockCake extends BlockContainer
 		}
 	}
 	
-	public int idDropped( int par1, Random rand, int par3 )
+	@Override
+	public Item getItemDropped( int par1, Random rand, int par3 )
 	{
-		return 0;
+		return null;
 	}
 	
+	@Override
 	public int quantityDropped( Random rand )
 	{
 		return 0;
@@ -192,6 +209,7 @@ public class BlockCake extends BlockContainer
 		list.add( new ItemStack( par1, 1, 0 ) );
 	}
 	
+	@Override
 	public int onBlockPlaced( World world, int x, int y, int z, int hitX, float hitY, float hitZ, float block, int meta )
 	{
 		return meta;
@@ -203,13 +221,15 @@ public class BlockCake extends BlockContainer
 		return new TileEntityCake();
 	}
 	
+	@Override
 	public int getRenderType()
 	{
 		return ZapApples.idRenderCake;
 	}
 	
+	@Override
 	@SideOnly( Side.CLIENT )
-	public void registerIcons( IIconRegister register )
+	public void registerBlockIcons( IIconRegister register )
 	{
 		postRender = true;
 		
@@ -232,6 +252,7 @@ public class BlockCake extends BlockContainer
 		}
 	}
 	
+	@Override
 	@SideOnly( Side.CLIENT )
 	public IIcon getIcon( int side, int meta )
 	{
@@ -256,6 +277,7 @@ public class BlockCake extends BlockContainer
 		return null;
 	}
 	
+	@Override
 	public void onBlockPlacedBy( World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack )
 	{
 		TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
@@ -266,6 +288,7 @@ public class BlockCake extends BlockContainer
 		}
 	}
 	
+	@Override
 	public ItemStack getPickBlock( MovingObjectPosition target, World world, int x, int y, int z )
 	{
 		ItemStack result = new ItemStack( this );
@@ -277,32 +300,33 @@ public class BlockCake extends BlockContainer
 		return result;
 	}
 	
-	public void breakBlock( World world, int x, int y, int z, Block oldBlock, int newId )
+	@Override
+	public void onBlockHarvested( World world, int x, int y, int z, int i, EntityPlayer player )
 	{
-		ItemStack result = new ItemStack( this );
-		TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
-		if ( tile != null )
+		super.onBlockHarvested( world, x, y, z, i, player );
+		
+		if ( !player.capabilities.isCreativeMode )
 		{
-			result.setTagCompound( tile.getItemNBT() );
+			ItemStack result = new ItemStack( this );
+			TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
+			if ( tile != null )
+			{
+				result.setTagCompound( tile.getItemNBT() );
+			}
+			
+			cachedItemStack = result;
 		}
-		
-		cachedItemStack = result;
-		
-		super.breakBlock( world, x, y, z, oldBlock, newId );
+		else
+			cachedItemStack = null;
 	}
 	
-	public ArrayList<ItemStack> getBlockDropped( World world, int x, int y, int z, int metadata, int fortune )
+	@Override
+	public void breakBlock( World world, int x, int y, int z, Block oldBlock, int newId )
 	{
-		if ( cachedItemStack == null )
-		{
-			return null;
-		}
-		ArrayList<ItemStack> result = Lists.newArrayList();
-		
-		result.add( cachedItemStack );
+		super.breakBlock( world, x, y, z, oldBlock, newId );
+		if ( cachedItemStack != null )
+			dropBlockAsItem( world, x, y, z, cachedItemStack );
 		cachedItemStack = null;
-		
-		return result;
 	}
 	
 	public class CakeIngredientMap

@@ -81,7 +81,7 @@ public class BlockGrayApple extends Block
 	}
 	
 	@SideOnly( Side.CLIENT )
-	public void registerIcons( IIconRegister register )
+	public void registerBlockIcons( IIconRegister register )
 	{
 		icon = register.registerIcon( "zapapples:zapapple_premature" );
 	}

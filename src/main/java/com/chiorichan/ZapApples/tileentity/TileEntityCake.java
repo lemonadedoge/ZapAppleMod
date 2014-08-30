@@ -36,6 +36,12 @@ public class TileEntityCake extends TileEntity
 		hasUpdate = true;
 	}
 	
+	@Override
+	public boolean canUpdate()
+	{
+		return true;
+	}
+	
 	public void updateEntity()
 	{
 		if ( ( !worldObj.isRemote ) && ( hasUpdate ) )

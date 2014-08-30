@@ -24,6 +24,8 @@ import com.chiorichan.ZapApples.liquids.TankBase;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cpw.mods.fml.common.FMLLog;
+
 public class TileEntityJar extends TileEntity implements IFluidHandler
 {
 	private TankBase tank = new TankBase( getTankCapacity(), "Jar", new FluidStack[0] );
@@ -117,6 +119,12 @@ public class TileEntityJar extends TileEntity implements IFluidHandler
 	public boolean containsValidLiquid()
 	{
 		return tank.getFluid() != null;
+	}
+	
+	@Override
+	public boolean canUpdate()
+	{
+		return true;
 	}
 	
 	public void updateEntity()

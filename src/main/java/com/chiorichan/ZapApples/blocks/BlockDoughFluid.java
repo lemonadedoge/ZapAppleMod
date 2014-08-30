@@ -29,13 +29,15 @@ public class BlockDoughFluid extends BlockFluidClassic
 		setBlockName( "doughfluid" );
 	}
 	
+	@Override
 	public IIcon getIcon( int side, int meta )
 	{
 		return ( side == 0 ) || ( side == 1 ) ? stillIcon : flowingIcon;
 	}
 	
+	@Override
 	@SideOnly( Side.CLIENT )
-	public void registerIcon( IIconRegister register )
+	public void registerBlockIcons( IIconRegister register )
 	{
 		stillIcon = register.registerIcon( "zapapples:doughstill" );
 		flowingIcon = register.registerIcon( "zapapples:doughflowing" );

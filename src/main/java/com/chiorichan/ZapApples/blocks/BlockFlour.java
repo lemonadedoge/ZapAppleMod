@@ -34,6 +34,7 @@ public class BlockFlour extends BlockFalling
 		if ( ( adjacentWater( world, x - 1, y, z ) ) || ( adjacentWater( world, x + 1, y, z ) ) || ( adjacentWater( world, x, y - 1, z ) ) || ( adjacentWater( world, x, y + 1, z ) ) || ( adjacentWater( world, x, y, z - 1 ) ) || ( adjacentWater( world, x, y, z + 1 ) ) )
 		{
 			world.setBlock( x, y, z, ZapApples.doughFluidBlock );
+			world.markBlockForUpdate( x, y, z );
 		}
 	}
 	
@@ -43,13 +44,14 @@ public class BlockFlour extends BlockFalling
 		if ( ( adjacentWater( world, x - 1, y, z ) ) || ( adjacentWater( world, x + 1, y, z ) ) || ( adjacentWater( world, x, y - 1, z ) ) || ( adjacentWater( world, x, y + 1, z ) ) || ( adjacentWater( world, x, y, z - 1 ) ) || ( adjacentWater( world, x, y, z + 1 ) ) )
 		{
 			world.setBlock( x, y, z, ZapApples.doughFluidBlock );
+			world.markBlockForUpdate( x, y, z );
 		}
 	}
 	
 	protected boolean adjacentWater( World world, int x, int y, int z )
 	{
 		Block b = world.getBlock( x, y, z );
-		return ( b == Blocks.water );
+		return ( b == Blocks.water || b == ZapApples.doughFluidBlock );
 	}
 	
 	public IIcon getIcon( int side, int meta )
@@ -58,7 +60,7 @@ public class BlockFlour extends BlockFalling
 	}
 	
 	@SideOnly( Side.CLIENT )
-	public void registerIcons( IIconRegister register )
+	public void registerBlockIcons( IIconRegister register )
 	{
 		icon = register.registerIcon( "zapapples:flour" );
 	}

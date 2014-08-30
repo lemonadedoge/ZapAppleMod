@@ -25,20 +25,23 @@ public class BlockPie extends BlockContainer
 		setCreativeTab( CreativeTabs.tabFood );
 		setHardness( 0.5F );
 		setStepSound( Block.soundTypeCloth );
-		setBlockName( "zapplePie" );
+		setBlockName( "zapApplePie" );
 	}
 	
+	@Override
 	public void setBlockBoundsBasedOnState( IBlockAccess world, int x, int y, int z )
 	{
 		setBlockBounds( 0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F );
 	}
 	
+	@Override
 	public void setBlockBoundsForItemRender()
 	{
 		float slice = 0.0625F;
 		setBlockBounds( slice, 0.0F, slice, 1.0F - slice, 0.5F, 1.0F - slice );
 	}
 	
+	@Override
 	public boolean onBlockActivated( World world, int x, int y, int z, EntityPlayer player, int side, float par7, float par8, float par9 )
 	{
 		if ( !world.isRemote )
@@ -49,6 +52,7 @@ public class BlockPie extends BlockContainer
 		return true;
 	}
 	
+	@Override
 	public void onBlockClicked( World world, int x, int y, int z, EntityPlayer player )
 	{
 		if ( !world.isRemote )
@@ -69,17 +73,20 @@ public class BlockPie extends BlockContainer
 		}
 	}
 	
+	@Override
 	public boolean canPlaceBlockAt( World world, int x, int y, int z )
 	{
 		return !super.canPlaceBlockAt( world, x, y, z ) ? false : canBlockStay( world, x, y, z );
 	}
 	
+	@Override
 	public boolean canBlockStay( World world, int x, int y, int z )
 	{
 		return world.getBlock( x, y - 1, z ).getMaterial().isSolid();
 	}
 	
-	public void onNeighborBlockChange( World world, int x, int y, int z, int meta )
+	@Override
+	public void onNeighborBlockChange( World world, int x, int y, int z, Block block )
 	{
 		if ( !canBlockStay( world, x, y, z ) )
 		{
@@ -88,47 +95,56 @@ public class BlockPie extends BlockContainer
 		}
 	}
 	
-	public int idDropped( int par1, Random rand, int par3 )
+	@Override
+	public Item getItemDropped( int par1, Random rand, int par3 )
 	{
-		return 0;
+		return null;
 	}
 	
+	@Override
 	public int quantityDropped( Random rand )
 	{
 		return 0;
 	}
 	
+	@Override
 	public void getSubBlocks( Item par1, CreativeTabs par2CreativeTabs, List list )
 	{
 		list.add( new ItemStack( par1, 1, 0 ) );
 	}
 	
+	@Override
 	public int onBlockPlaced( World world, int x, int y, int z, int hitX, float hitY, float hitZ, float block, int meta )
 	{
 		return meta;
 	}
 	
+	@Override
 	public TileEntity createNewTileEntity( World world, int i )
 	{
 		return new TileEntityPie();
 	}
 	
+	@Override
 	public boolean isOpaqueCube()
 	{
 		return false;
 	}
 	
+	@Override
 	public boolean renderAsNormalBlock()
 	{
 		return false;
 	}
 	
+	@Override
 	public int getRenderType()
 	{
 		return -1;
 	}
 	
-	public void registerIcons( IIconRegister icon )
+	@Override
+	public void registerBlockIcons( IIconRegister icon )
 	{
 		blockIcon = icon.registerIcon( "zapapples:pie" );
 	}

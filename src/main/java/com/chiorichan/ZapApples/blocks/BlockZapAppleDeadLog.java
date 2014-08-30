@@ -6,20 +6,15 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import com.chiorichan.ZapApples.tileentity.TileEntityZapAppleLog;
-
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockZapAppleLog extends BlockRotatedPillerContainer
+public class BlockZapAppleDeadLog extends BlockRotatedPillerContainer
 {
 	
 	@SideOnly( Side.CLIENT )
@@ -28,13 +23,13 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 	@SideOnly( Side.CLIENT )
 	protected IIcon topIcon;
 	
-	public BlockZapAppleLog()
+	public BlockZapAppleDeadLog()
 	{
 		super( Material.wood );
 		setCreativeTab( CreativeTabs.tabBlock );
 		setHardness( 2.0F );
 		setStepSound( Block.soundTypeWood );
-		setBlockName( "zapAppleLog" );
+		setBlockName( "zapAppleDeadLog" );
 	}
 	
 	@Override
@@ -67,8 +62,8 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 	@SideOnly( Side.CLIENT )
 	public void registerBlockIcons( IIconRegister register )
 	{
-		sideIcon = register.registerIcon( "zapapples:zapapple_log_side" );
-		topIcon = register.registerIcon( "zapapples:zapapple_log_top" );
+		sideIcon = register.registerIcon( "zapapples:zapapple_dead_log_side" );
+		topIcon = register.registerIcon( "zapapples:zapapple_dead_log_top" );
 	}
 	
 	@Override
@@ -118,33 +113,6 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 		}
 	}
 	
-	public void onBlockPreDestroy( World world, int x, int y, int z, int i )
-	{
-		// Called before block is removed, no matter by who or what.
-	}
-	
-	public void onBlockHarvested( World world, int x, int y, int z, int i, EntityPlayer player )
-	{
-		// Hmm? How is this different from PreDestroy?
-		TileEntity _tile = world.getTileEntity( x, y, z );
-		
-		FMLLog.info( "Block at " + x + "," + y + "," + z + " was removed! " + _tile );
-		
-		if ( _tile != null && _tile instanceof TileEntityZapAppleLog )
-		{
-			TileEntityZapAppleLog tile = (TileEntityZapAppleLog) _tile;
-			if ( tile.isFunctional )
-			{
-				tile.killAllLogs();
-			}
-		}
-	}
-	
-	public void onBlockDestroyedByPlayer( World world, int x, int y, int z, int i )
-	{
-		
-	}
-	
 	@Override
 	protected ItemStack createStackedBlock( int meta )
 	{
@@ -154,7 +122,7 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 	@Override
 	public boolean canSustainLeaves( IBlockAccess world, int x, int y, int z )
 	{
-		return true;
+		return false;
 	}
 	
 	@Override
@@ -162,11 +130,10 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 	{
 		return true;
 	}
-	
+
 	@Override
-	public TileEntity createNewTileEntity( World world, int i )
+	public TileEntity createNewTileEntity( World arg0, int arg1 )
 	{
-		// return new TileEntityZapAppleLog(); // Tile Entity is set by the tree generator. Too many entities lags peoples games.
 		return null;
 	}
 }

@@ -14,10 +14,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockZapApplePlanks extends Block
 {
-	
-	@SideOnly( Side.CLIENT )
-	private IIcon icon;
-	
 	public BlockZapApplePlanks()
 	{
 		super( Material.wood );
@@ -25,29 +21,20 @@ public class BlockZapApplePlanks extends Block
 		setHardness( 2.0F );
 		setResistance( 5.0F );
 		setStepSound( Block.soundTypeWood );
-		setBlockName( "wood" );
+		setBlockName( "zapPlanks" );
+		setBlockTextureName( "zapapples:zapapple_planks" );
 	}
 	
-	@SideOnly( Side.CLIENT )
-	public IIcon getIcon( int par1, int par2 )
-	{
-		return icon;
-	}
-	
+	@Override
 	public int damageDropped( int par1 )
 	{
 		return par1;
 	}
 	
+	@Override
 	@SideOnly( Side.CLIENT )
 	public void getSubBlocks( Item par1, CreativeTabs par2CreativeTabs, List par3List )
 	{
 		par3List.add( new ItemStack( par1, 1, 0 ) );
-	}
-	
-	@SideOnly( Side.CLIENT )
-	public void registerIcons( IIconRegister register )
-	{
-		icon = register.registerIcon( "zapapples:zapapple_planks" );
 	}
 }

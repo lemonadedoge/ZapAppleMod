@@ -19,7 +19,7 @@ public class BlockZapApple extends BlockGrayApple
 	{
 		super();
 		setResistance( 0.0F );
-		setHardness( 0.1F );
+		setHardness( 0.0F );
 		setStepSound( Block.soundTypeGrass );
 		setBlockName( "zapApple" );
 	}
@@ -30,7 +30,7 @@ public class BlockZapApple extends BlockGrayApple
 	}
 	
 	@SideOnly( Side.CLIENT )
-	public void registerIcons( IIconRegister register )
+	public void registerBlockIcons( IIconRegister register )
 	{
 		icon = register.registerIcon( "zapapples:zapapple_mature" );
 	}

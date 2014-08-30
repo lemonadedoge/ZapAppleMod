@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.EnumChatFormatting;
 
-public class ItemZapApple extends ItemGrayApple
+public class ItemZapApple extends ItemZapAppleGray
 {
 	public ItemZapApple(Block block)
 	{

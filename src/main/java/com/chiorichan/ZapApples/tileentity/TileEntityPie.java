@@ -34,6 +34,12 @@ public class TileEntityPie extends TileEntity
 	}
 	
 	@Override
+	public boolean canUpdate()
+	{
+		return true;
+	}
+	
+	@Override
 	public void updateEntity()
 	{
 		if ( ( !worldObj.isRemote ) && ( hasUpdate ) )

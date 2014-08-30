@@ -34,13 +34,15 @@ public class BlockZapAppleJam extends BlockFluidClassic
 		setBlockName( "zapapplejam" );
 	}
 	
-	public IIcon a( int side, int meta )
+	@Override
+	public IIcon getIcon( int side, int meta )
 	{
 		return ( side == 0 ) || ( side == 1 ) ? stillIcon : flowingIcon;
 	}
 	
+	@Override
 	@SideOnly( Side.CLIENT )
-	public void registerIcon( IIconRegister register )
+	public void registerBlockIcons( IIconRegister register )
 	{
 		stillIcon = register.registerIcon( "zapapples:zapapplejamstill" );
 		flowingIcon = register.registerIcon( "zapapples:zapapplejamflowing" );

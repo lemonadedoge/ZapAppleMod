@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemGrayApple extends ItemBlock
+public class ItemZapAppleGray extends ItemBlock
 {
 	protected int healAmount;
 	protected float saturationModifier;
@@ -26,7 +26,7 @@ public class ItemGrayApple extends ItemBlock
 	private boolean alwaysEdible;
 	private boolean isPlacable;
 	
-	public ItemGrayApple(Block block)
+	public ItemZapAppleGray(Block block)
 	{
 		super( block );
 		healAmount = -6;
@@ -42,6 +42,7 @@ public class ItemGrayApple extends ItemBlock
 		itemIcon = register.registerIcon( "zapapples:zapapple_premature" );
 	}
 	
+	@Override
 	public ItemStack onEaten( ItemStack stack, World world, EntityPlayer player )
 	{
 		stack.stackSize -= 1;
@@ -64,6 +65,7 @@ public class ItemGrayApple extends ItemBlock
 		}
 	}
 	
+	@Override
 	public int getMaxItemUseDuration( ItemStack stack )
 	{
 		return 32;

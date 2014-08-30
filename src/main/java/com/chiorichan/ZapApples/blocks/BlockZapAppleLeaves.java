@@ -44,7 +44,7 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 	}
 	
 	@SideOnly( Side.CLIENT )
-	public void registerIcons( IIconRegister register )
+	public void registerBlockIcons( IIconRegister register )
 	{
 		icon = register.registerIcon( "zapapples:zapapple_leaves" );
 	}

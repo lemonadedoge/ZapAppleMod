@@ -25,6 +25,7 @@ import com.chiorichan.ZapApples.blocks.BlockGrayApple;
 import com.chiorichan.ZapApples.blocks.BlockJar;
 import com.chiorichan.ZapApples.blocks.BlockPie;
 import com.chiorichan.ZapApples.blocks.BlockZapApple;
+import com.chiorichan.ZapApples.blocks.BlockZapAppleDeadLog;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleFlowers;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleJam;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleLeaves;
@@ -33,12 +34,13 @@ import com.chiorichan.ZapApples.blocks.BlockZapApplePlanks;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleSapling;
 import com.chiorichan.ZapApples.items.ItemCake;
 import com.chiorichan.ZapApples.items.ItemFluidBucket;
-import com.chiorichan.ZapApples.items.ItemGrayApple;
 import com.chiorichan.ZapApples.items.ItemIcing;
 import com.chiorichan.ZapApples.items.ItemJamFood;
 import com.chiorichan.ZapApples.items.ItemJar;
 import com.chiorichan.ZapApples.items.ItemPie;
 import com.chiorichan.ZapApples.items.ItemZapApple;
+import com.chiorichan.ZapApples.items.ItemZapAppleGray;
+import com.chiorichan.ZapApples.items.ItemZapAppleMushed;
 import com.chiorichan.ZapApples.mobs.EntityTimberWolf;
 import com.chiorichan.ZapApples.tileentity.TileEntityCake;
 import com.chiorichan.ZapApples.tileentity.TileEntityJar;
@@ -94,6 +96,7 @@ public class ZapApples
 	public static int idRenderApple;
 	public static int bucketsPerJar = 12;
 	public static BlockZapAppleLog zapAppleLog;
+	public static BlockZapAppleDeadLog zapAppleDeadLog;
 	public static BlockZapAppleLeaves zapAppleLeaves;
 	public static BlockZapAppleSapling zapAppleSapling;
 	public static BlockZapAppleFlowers zapAppleFlowers;
@@ -109,9 +112,11 @@ public class ZapApples
 	public static BlockZapAppleJam zapAppleJamBlock;
 	public static BlockDoughFluid doughFluidBlock;
 	public static ItemJamFood jamFood;
+	public static ItemZapAppleMushed zapAppleMushed;
 	public static ItemFluidBucket jamBucket;
 	public static ItemFluidBucket doughBucket;
 	public static ItemIcing icing;
+	public static boolean showDayChangeMessages = false;
 	
 	@EventHandler
 	public void preInit( FMLPreInitializationEvent event )
@@ -123,6 +128,7 @@ public class ZapApples
 			
 			lightningEffect = config.get( "general", "lightningEffect", true ).getBoolean( true );
 			bucketsPerJar = config.get( "general", "bucketsPerJar", 6 ).getInt( 6 );
+			showDayChangeMessages = config.getBoolean( "general", "showDayChangeMessages", true, "Changing to false will omit all global chat messages." );
 		}
 		catch ( Exception e )
 		{
@@ -134,6 +140,7 @@ public class ZapApples
 		}
 		
 		zapAppleLog = new BlockZapAppleLog();
+		zapAppleDeadLog = new BlockZapAppleDeadLog();
 		zapAppleLeaves = new BlockZapAppleLeaves();
 		zapAppleSapling = new BlockZapAppleSapling();
 		zapAppleFlowers = new BlockZapAppleFlowers();
@@ -145,21 +152,20 @@ public class ZapApples
 		cake = new BlockCake();
 		flour = new BlockFlour();
 		/*
-		List<BiomeGenBase> biomes = Lists.newArrayList();
-		
-		biomes.add( BiomeGenBase.forest );
-		biomes.add( BiomeGenBase.taiga );
-		biomes.add( BiomeGenBase.sky );
-		biomes.add( BiomeGenBase.forestHills );
-		biomes.add( BiomeGenBase.taigaHills );
-		biomes.add( BiomeGenBase.jungle );
-		biomes.add( BiomeGenBase.jungleHills );
-		biomes.add( BiomeGenBase.swampland );
-		*/
+		 * List<BiomeGenBase> biomes = Lists.newArrayList();
+		 * biomes.add( BiomeGenBase.forest );
+		 * biomes.add( BiomeGenBase.taiga );
+		 * biomes.add( BiomeGenBase.sky );
+		 * biomes.add( BiomeGenBase.forestHills );
+		 * biomes.add( BiomeGenBase.taigaHills );
+		 * biomes.add( BiomeGenBase.jungle );
+		 * biomes.add( BiomeGenBase.jungleHills );
+		 * biomes.add( BiomeGenBase.swampland );
+		 */
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		
-		//EntityRegistry.registerGlobalEntityID( EntityTimberWolf.class, "TimberWolf", id, Color.DARK_GRAY.getRGB(), Color.GREEN.getRGB() );
-		//EntityRegistry.addSpawn( EntityTimberWolf.class, 2, 0, 1, EnumCreatureType.creature, (BiomeGenBase[]) biomes.toArray( new BiomeGenBase[0] ) );
+		// EntityRegistry.registerGlobalEntityID( EntityTimberWolf.class, "TimberWolf", id, Color.DARK_GRAY.getRGB(), Color.GREEN.getRGB() );
+		// EntityRegistry.addSpawn( EntityTimberWolf.class, 2, 0, 1, EnumCreatureType.creature, (BiomeGenBase[]) biomes.toArray( new BiomeGenBase[0] ) );
 		
 		EntityRegistry.registerModEntity( EntityTimberWolf.class, "timberwolf", id, this, 80, 3, true );
 		
@@ -173,7 +179,7 @@ public class ZapApples
 		
 		doughFluid = new Fluid( "Dough" );
 		doughFluid.setLuminosity( 1 );
-		doughFluid.setDensity( 1000 );
+		doughFluid.setDensity( 100 );
 		
 		FluidRegistry.registerFluid( doughFluid );
 		
@@ -193,16 +199,18 @@ public class ZapApples
 		
 		// zapAppleJam.setBlockName( zapAppleJamBlock.getUnlocalizedName() );
 		
+		zapAppleMushed = new ItemZapAppleMushed();
 		jamFood = new ItemJamFood();
 		icing = new ItemIcing();
 		jamBucket = new ItemFluidBucket( zapAppleJamBlock, "zapAppleJamBucket", "jam_bucket" );
 		doughBucket = new ItemFluidBucket( doughFluidBlock, "doughBucket", "dough_bucket" );
 		
 		GameRegistry.registerBlock( zapAppleLog, "zapAppleLog" );
+		GameRegistry.registerBlock( zapAppleDeadLog, "zapAppleDeadLog" );
 		GameRegistry.registerBlock( zapAppleLeaves, "zapAppleLeaves" );
 		GameRegistry.registerBlock( zapAppleSapling, "zapAppleSapling" );
 		GameRegistry.registerBlock( zapAppleFlowers, "zapAppleFlowers" );
-		GameRegistry.registerBlock( grayApple, ItemGrayApple.class, "grayApple" );
+		GameRegistry.registerBlock( grayApple, ItemZapAppleGray.class, "grayApple" );
 		GameRegistry.registerBlock( zapApple, ItemZapApple.class, "zapApple" );
 		GameRegistry.registerBlock( jar, ItemJar.class, "jar" );
 		GameRegistry.registerBlock( zapPlanks, "zapApplePlanks" );
@@ -210,6 +218,7 @@ public class ZapApples
 		GameRegistry.registerBlock( cake, ItemCake.class, "cake" );
 		GameRegistry.registerBlock( pie, ItemPie.class, "pie" );
 		
+		GameRegistry.registerItem( zapAppleMushed, "zapAppleMushed" );
 		GameRegistry.registerItem( jamFood, "jamFood" );
 		GameRegistry.registerItem( jamBucket, "jamBucket" );
 		GameRegistry.registerItem( doughBucket, "doughBucket" );
@@ -226,25 +235,7 @@ public class ZapApples
 		BucketHandler.INSTANCE.buckets.put( zapAppleJamBlock, jamBucket );
 		BucketHandler.INSTANCE.buckets.put( doughFluidBlock, doughBucket );
 		MinecraftForge.EVENT_BUS.register( BucketHandler.INSTANCE );
-		/*
-		 * LanguageRegistry.instance().addStringLocalization( "entity.TimberWolf.name", "en_US", "Timber Wolf" );
-		 * LanguageRegistry.addName( zapAppleLog, "Zap Apple Log" );
-		 * LanguageRegistry.addName( zapAppleLeaves, "Zap Apple Leaves" );
-		 * LanguageRegistry.addName( zapAppleSapling, "Zapling" );
-		 * LanguageRegistry.addName( zapAppleFlowers, "Zap Apple Flowers" );
-		 * LanguageRegistry.addName( grayApple, "Premature Zap Apple" );
-		 * LanguageRegistry.addName( zapApple, "Zap Apple" );
-		 * LanguageRegistry.addName( zapPlanks, "Zap Apple Wood Planks" );
-		 * LanguageRegistry.addName( jamFood, "Zap Apple Bread" );
-		 * LanguageRegistry.addName( flour, "Flour" );
-		 * LanguageRegistry.addName( zapAppleJamBlock, "Zap Apple Jam" );
-		 * LanguageRegistry.addName( jamBucket, "Zap Apple Jam" );
-		 * LanguageRegistry.addName( doughFluidBlock, "Dough" );
-		 * LanguageRegistry.addName( doughBucket, "Dough" );
-		 * LanguageRegistry.addName( jar, "Glass Fluid Jar" );
-		 * LanguageRegistry.addName( cake, "Cake" );
-		 * LanguageRegistry.addName( pie, "Pie" );
-		 */
+
 		cake.registerBaseOption( "plain", "Plain", null );
 		cake.registerFrostOption( "plain", "Plain", null );
 		
@@ -253,8 +244,6 @@ public class ZapApples
 		
 		for ( int i = 0; i < 16; i++ )
 		{
-			// LanguageRegistry.addName( new ItemStack( icing, 1, i ), icings[i] + " Icing" );
-			
 			cake.registerBaseOption( "" + i, icings[i], null );
 			cake.registerFrostOption( "" + i, icings[i], new ItemStack( icing, 1, i ) );
 		}
@@ -269,6 +258,7 @@ public class ZapApples
 		GameRegistry.addRecipe( new ItemStack( jar ), new Object[] { " I ", "G G", " G ", Character.valueOf( 'I' ), Items.iron_ingot, Character.valueOf( 'G' ), Blocks.glass_pane } );
 		GameRegistry.addShapelessRecipe( new ItemStack( jamBucket, 1 ), new Object[] { Items.bucket, zapApple } );
 		GameRegistry.addShapelessRecipe( new ItemStack( zapPlanks, 4 ), new Object[] { new ItemStack( zapAppleLog ) } );
+		GameRegistry.addShapelessRecipe( new ItemStack( zapPlanks, 4 ), new Object[] { new ItemStack( zapAppleDeadLog ) } );
 		GameRegistry.addShapelessRecipe( new ItemStack( Items.dye, 1, 5 ), new Object[] { new ItemStack( zapPlanks ) } );
 		
 		GameRegistry.addShapelessRecipe( new ItemStack( jamFood, 3, 0 ), new Object[] { new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( jamBucket, 1, 1 ) } );
@@ -291,6 +281,9 @@ public class ZapApples
 	
 	public static void dayChangeEvent( World world, int day )
 	{
+		if ( !showDayChangeMessages )
+			return;
+		
 		String msg = null;
 		
 		switch ( 25 - day )
@@ -315,8 +308,6 @@ public class ZapApples
 		{
 			return;
 		}
-		
-		// PacketHandler.getDispatcher().sendToDimension( new ChatComponentText( EnumChatFormatting.DARK_PURPLE + msg ), );
 		
 		for ( Object player : world.playerEntities )
 		{

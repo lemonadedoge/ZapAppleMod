@@ -14,6 +14,7 @@ import com.chiorichan.ZapApples.tileentity.TileEntityJar;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLLog;
 
 public class Render3D implements ISimpleBlockRenderingHandler
 {

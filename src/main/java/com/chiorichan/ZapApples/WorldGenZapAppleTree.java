@@ -61,6 +61,7 @@ public class WorldGenZapAppleTree extends WorldGenerator
 		generateLeafNodeBases();
 		generateFlowers();
 		
+		worldObj.setBlock( x, y, z, ZapApples.zapAppleLog );
 		worldObj.setTileEntity( x, y, z, tile );
 		
 		return true;
@@ -293,41 +294,41 @@ public class WorldGenZapAppleTree extends WorldGenerator
 	
 	void genTreeLayer( int par1, int par2, int par3, float par4, byte par5, Block par6 )
 	{
-		int var7 = (int) ( par4 + 0.618D );
+		int var7 = (int) ( (double) par4 + 0.618D );
 		byte var8 = otherCoordPairs[par5];
-		byte var9 = otherCoordPairs[( par5 + 3 )];
-		int[] var10 = { par1, par2, par3 };
-		int[] var11 = { 0, 0, 0 };
+		byte var9 = otherCoordPairs[par5 + 3];
+		int[] var10 = new int[] { par1, par2, par3 };
+		int[] var11 = new int[] { 0, 0, 0 };
 		int var12 = -var7;
 		int var13 = -var7;
 		
-		for ( var11[par5] = var10[par5]; var12 <= var7; var12++ )
+		for ( var11[par5] = var10[par5]; var12 <= var7; ++var12 )
 		{
-			var10[var8] += var12;
+			var11[var8] = var10[var8] + var12;
 			var13 = -var7;
 			
 			while ( var13 <= var7 )
 			{
-				double var15 = Math.pow( Math.abs( var12 ) + 0.5D, 2.0D ) + Math.pow( Math.abs( var13 ) + 0.5D, 2.0D );
+				double var15 = Math.pow( (double) Math.abs( var12 ) + 0.5D, 2.0D ) + Math.pow( (double) Math.abs( var13 ) + 0.5D, 2.0D );
 				
-				if ( var15 > par4 * par4 )
+				if ( var15 > (double) ( par4 * par4 ) )
 				{
-					var13++;
+					++var13;
 				}
 				else
 				{
-					var10[var9] += var13;
-					Block b = worldObj.getBlock( var11[0], var11[1], var11[2] );
+					var11[var9] = var10[var9] + var13;
+					Block var14 = this.worldObj.getBlock( var11[0], var11[1], var11[2] );
 					
-					if ( ( b != Block.getBlockById( 0 ) ) && ( ( b != ZapApples.zapAppleLeaves ) || ( b == Block.getBlockFromName( "snow" ) ) || ( b == Block.getBlockFromName( "leaves" ) ) || ( b == Block.getBlockFromName( "vine" ) ) ) )
+					if ( var14 != Blocks.air && ( var14 != ZapApples.zapAppleLeaves || var14 == Blocks.snow || var14 == Blocks.leaves || var14 == Blocks.vine ) )
 					{
-						var13++;
+						++var13;
 					}
 					else
 					{
 						tile.leafPositions.add( new OrderedTriple( var11[0], var11[1], var11[2] ) );
-						
-						var13++;
+						// this.setBlockAndMetadata(this.worldObj, var11[0], var11[1], var11[2], par6, 0);
+						++var13;
 					}
 				}
 			}
@@ -416,7 +417,8 @@ public class WorldGenZapAppleTree extends WorldGenerator
 					}
 				}
 				tile.leafPositions.remove( new OrderedTriple( var14[0], var14[1], var14[2] ) );
-				this.setBlockAndNotifyAdequately( this.worldObj, var14[0], var14[1], var14[2], ZapApples.zapAppleLog, var17 );
+				tile.logPositions.add( new OrderedTriple( var14[0], var14[1], var14[2] ) );
+				setBlockAndNotifyAdequately( this.worldObj, var14[0], var14[1], var14[2], ZapApples.zapAppleLog, var17 );
 			}
 		}
 	}

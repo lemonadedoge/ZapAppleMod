@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +21,8 @@ import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cpw.mods.fml.common.FMLLog;
+
 public class TileEntityZapAppleLog extends TileEntity
 {
 	private Random rand;
@@ -32,23 +33,32 @@ public class TileEntityZapAppleLog extends TileEntity
 	public boolean isFunctional;
 	public boolean[] finished;
 	public List<OrderedTriple> leafPositions;
+	public List<OrderedTriple> logPositions;
 	public HashMap<OrderedTriple, Integer> applePositions;
 	
 	public void setIsFunctional()
 	{
 		isFunctional = true;
 		leafPositions = Lists.newLinkedList();
+		logPositions = Lists.newLinkedList();
 		applePositions = Maps.newHashMap();
 		finished = new boolean[6];
 		delay = 5;
 		rand = new Random();
 	}
 	
+	@Override
+	public boolean canUpdate()
+	{
+		return true;
+	}
+	
+	@Override
 	public void updateEntity()
 	{
-		if ( ( isFunctional ) && ( --delay <= 0 ) )
+		if ( ( isFunctional ) && ( --delay <= 0 ) && !worldObj.isRemote )
 		{
-			delay = 5;
+			delay = 10;
 			int day = DaytimeManager.getDay( worldObj );
 			if ( day == 0 )
 			{
@@ -89,7 +99,7 @@ public class TileEntityZapAppleLog extends TileEntity
 					OrderedTriple pos = (OrderedTriple) leafCopy.get( index++ );
 					if ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) )
 					{
-						if ( ( ZapApples.lightningEffect ) && ( rand.nextInt( 20 ) == 1 ) )
+						if ( ( ZapApples.lightningEffect ) && ( rand.nextInt( 30 ) == 1 ) )
 						{
 							int x = xCoord + rand.nextInt( 21 ) - 9;
 							int y = yCoord;
@@ -239,6 +249,13 @@ public class TileEntityZapAppleLog extends TileEntity
 				leafPositions.add( OrderedTriple.valueOf( leaves.getString( "" + i ) ) );
 			}
 			
+			NBTTagCompound logs = tag.getCompoundTag( "logs" );
+			int logSize = logs.getInteger( "size" );
+			for ( int i = 0; i < logSize; i++ )
+			{
+				logPositions.add( OrderedTriple.valueOf( logs.getString( "" + i ) ) );
+			}
+			
 			NBTTagCompound apples = tag.getCompoundTag( "apples" );
 			int appleSize = apples.getInteger( "size" );
 			for ( int i = 0; i < appleSize; i++ )
@@ -273,6 +290,14 @@ public class TileEntityZapAppleLog extends TileEntity
 			}
 			tag.setTag( "leaves", leaves );
 			
+			NBTTagCompound logs = new NBTTagCompound();
+			logs.setInteger( "size", logPositions.size() );
+			for ( int i = 0; i < logPositions.size(); i++ )
+			{
+				logs.setString( "" + i, ( (OrderedTriple) logPositions.get( i ) ).toString() );
+			}
+			tag.setTag( "logs", logs );
+			
 			NBTTagCompound apples = new NBTTagCompound();
 			List<OrderedTriple> temp = new ArrayList<OrderedTriple>( applePositions.keySet() );
 			apples.setInteger( "size", temp.size() );
@@ -303,5 +328,17 @@ public class TileEntityZapAppleLog extends TileEntity
 	public void markForUpdate()
 	{
 		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
+	}
+	
+	public void killAllLogs()
+	{
+		for ( OrderedTriple pos : logPositions )
+		{
+			int meta = worldObj.getBlockMetadata( pos.getX(), pos.getY(), pos.getZ() );
+			if ( meta < 0 )
+				meta = 0;
+			worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleDeadLog, meta, 0 );
+			worldObj.markBlockForUpdate( pos.getX(), pos.getY(), pos.getZ() );
+		}
 	}
 }

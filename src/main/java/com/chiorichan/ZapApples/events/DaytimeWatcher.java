@@ -107,6 +107,7 @@ public class DaytimeWatcher
 			if ( worldObj.isDaytime() )
 			{
 				ZapApples.dayChangeEvent( worldObj, day );
+				FMLLog.info( "The zap apple cycle is now on day: " + day );
 				
 				if ( ++day >= 25 )
 				{

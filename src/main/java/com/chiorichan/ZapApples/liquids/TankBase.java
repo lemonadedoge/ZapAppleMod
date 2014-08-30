@@ -1,5 +1,6 @@
 package com.chiorichan.ZapApples.liquids;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -41,7 +42,7 @@ public class TankBase extends FluidTank
 	
 	public double getPercentFull()
 	{
-		return getFluidAmount() / getCapacity();
+		return (double) getFluidAmount() / getCapacity();
 	}
 	
 	public int fill( FluidStack resource, boolean doFill )

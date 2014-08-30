@@ -1,15 +1,19 @@
 package com.chiorichan.ZapApples.events;
 
-import net.minecraft.client.Minecraft;
+import java.util.Map;
+
 import net.minecraft.world.World;
+import net.minecraftforge.event.world.WorldEvent;
+
+import com.google.common.collect.Maps;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
 public class DaytimeManager
 {
-	private static int index;
-	public static DaytimeWatcher[] watchers = new DaytimeWatcher[0];
+	public static Map<World, DaytimeWatcher> watchers = Maps.newHashMap();
 	
 	public DaytimeManager()
 	{
@@ -17,68 +21,25 @@ public class DaytimeManager
 	}
 
 	@SubscribeEvent
-	public void onServerTick( TickEvent.ServerTickEvent event )
+	public void onWorldTick( TickEvent.WorldTickEvent event )
 	{
-		if ( Minecraft.getMinecraft().getIntegratedServer() == null )
-		{
-			possibleClose();
-			return;
-		}
+		if ( !watchers.containsKey( event.world ) )
+			watchers.put( event.world, new DaytimeWatcher( event.world ) );
 		
-		if ( watchers.length != Minecraft.getMinecraft().getIntegratedServer().worldServers.length )
-		{
-			createNewWatchers();
-			return;
-		}
-		
-		watchers[( index++ )].tick();
-		
-		if ( index >= watchers.length )
-		{
-			index = 0;
-		}
+		watchers.get( event.world ).tick();
 	}
 	
-	public static void possibleClose()
+	@SubscribeEvent
+	public void onWorldUnload( WorldEvent.Unload event )
 	{
-		if ( watchers.length > 0 )
-		{
-			for ( DaytimeWatcher dw : watchers )
-			{
-				dw.close();
-			}
-			watchers = new DaytimeWatcher[0];
-			index = 0;
-		}
+		watchers.remove( event.world );
 	}
 	
 	public static int getDay( World world )
 	{
-		for ( DaytimeWatcher dw : watchers )
-		{
-			if ( dw.name.equalsIgnoreCase( world.getSaveHandler().getWorldDirectoryName() ) )
-			{
-				return dw.day;
-			}
-		}
-		return 0;
-	}
-	
-	private static void createNewWatchers()
-	{
-		World[] worlds = Minecraft.getMinecraft().getIntegratedServer().worldServers;
-		if ( worlds.length > 0 )
-		{
-			for ( DaytimeWatcher dw : watchers )
-			{
-				dw.close();
-			}
-			watchers = new DaytimeWatcher[worlds.length];
-			for ( int i = 0; i < worlds.length; i++ )
-			{
-				watchers[i] = new DaytimeWatcher( worlds[i] );
-			}
-			index = 0;
-		}
+		if ( !watchers.containsKey( world ) )
+			return 0;
+		
+		return watchers.get( world ).day;
 	}
 }

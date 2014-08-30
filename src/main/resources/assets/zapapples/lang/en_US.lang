@@ -1,0 +1,46 @@
+tile.zapAppleLog.name=Zap Apple Log
+tile.zapAppleDeadLog.name=Dead Zap Apple Log
+tile.zapAppleLeaves.name=Zap Apple Leaves
+tile.zapAppleSapling.name=Zapling
+tile.zapAppleFlowers.name=Zap Apple Flower
+tile.grayApple.name=Premature Zap Apple
+tile.zapApple.name=Zap Apple
+tile.zapPlanks.name=Zap Apple Wood Planks
+tile.jamFood.name=Zap Apple Bread
+tile.flour.name=Flour
+tile.zapAppleJamBlock.name=Zap Apple Jam
+tile.jamBucket.name=Zap Apple Jam
+tile.doughFluidBlock.name=Dough
+tile.doughBucket.name=Dough
+tile.jar.name=Glass Fluid Jar
+tile.cake.name=Cake
+tile.pie.name=Pie
+tile.doughfluid.name=Dough
+tile.zapapplejam.name=Zap Apple Jam
+tile.zapApplePie.name=Zap Apple Pie
+tile.zapAppleCake.name=Zap Apple Cake
+
+item.icing.name=Icing
+item.icing.black.name=Black Icing
+item.icing.red.name=Red
+item.icing.green.name=Green
+item.icing.chocolate.name=Chocolate
+item.icing.blue.name=Blue
+item.icing.purple.name=Purple
+item.icing.cyan.name=Cyan
+item.icing.silver.name=Silver
+item.icing.gray.name=Gray
+item.icing.pink.name=Pink
+item.icing.lime.name=Lime
+item.icing.yellow.name=Yellow
+item.icing.light_blue.name=Light Blue
+item.icing.magenta.name=Magenta
+item.icing.orange.name=Orange
+item.icing.vanilla.name=Vanilla
+item.jamFood.name=Zap Apple Jam Sandwich
+
+item.zapAppleMushed.name=Pureed Zap Apple
+item.zapAppleJamBucket.name=Zap Apple Jam Bucket
+item.doughBucket.name=Dough Bucket
+
+entity.TimberWolf.name=Timber Wolf
