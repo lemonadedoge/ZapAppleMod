@@ -1,7 +1,5 @@
 package com.chiorichan.ZapApples.render;
 
-import javax.swing.Icon;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -14,7 +12,6 @@ import com.chiorichan.ZapApples.tileentity.TileEntityJar;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLLog;
 
 public class Render3D implements ISimpleBlockRenderingHandler
 {

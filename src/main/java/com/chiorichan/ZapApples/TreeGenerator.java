@@ -14,12 +14,12 @@ public class TreeGenerator implements IWorldGenerator
 {
 	public void generate( Random rand, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider )
 	{
-		if ( world.provider.dimensionId == 0 )
+		if ( !ZapApples.disableZapAppleTreesInDimensions.contains( world.provider.dimensionId ) )
 		{
 			BiomeGenBase b = world.getBiomeGenForCoords( chunkX * 16, chunkZ * 16 );
 			if ( ( b != null ) && ( b.biomeName != null ) && ( ( b.biomeName.equalsIgnoreCase( "Savanna" ) ) || ( b.biomeName.equalsIgnoreCase( "Forest" ) ) || ( b.biomeName.equalsIgnoreCase( "Taiga" ) ) || ( b.biomeName.equalsIgnoreCase( "Sky" ) ) || ( b.biomeName.equalsIgnoreCase( "ForestHills" ) ) || ( b.biomeName.equalsIgnoreCase( "TaigaHills" ) ) || ( b.biomeName.equalsIgnoreCase( "Jungle" ) ) || ( b.biomeName.equalsIgnoreCase( "JungleHills" ) ) || ( b.biomeName.equalsIgnoreCase( "Swampland" ) ) ) )
 			{
-				if ( rand.nextInt( 30 ) == 1 )
+				if ( rand.nextInt( 70 ) == 1 )
 				{
 					for ( int x = chunkX * 16; x < chunkX * 16 + 16; x++ )
 					{

@@ -53,7 +53,6 @@ public class WorldGenZapAppleTree extends WorldGenerator
 		}
 		
 		tile = new TileEntityZapAppleLog();
-		tile.setIsFunctional();
 		
 		generateLeafNodeList();
 		generateLeaves();

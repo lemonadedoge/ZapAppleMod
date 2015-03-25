@@ -6,6 +6,7 @@ tile.zapAppleFlowers.name=Zap Apple Flower
 tile.grayApple.name=Premature Zap Apple
 tile.zapApple.name=Zap Apple
 tile.zapPlanks.name=Zap Apple Wood Planks
+tile.zapAppleWoodDoor=Zap Apple Wood Door
 tile.jamFood.name=Zap Apple Bread
 tile.flour.name=Flour
 tile.zapAppleJamBlock.name=Zap Apple Jam
@@ -44,3 +45,6 @@ item.zapAppleJamBucket.name=Zap Apple Jam Bucket
 item.doughBucket.name=Dough Bucket
 
 entity.TimberWolf.name=Timber Wolf
+
+fluid.dough=Dough
+fluid.zapAppleJam=Zap Apple Jam

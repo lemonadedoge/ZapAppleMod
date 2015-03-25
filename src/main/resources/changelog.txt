@@ -1,0 +1,9 @@
+2.4alpha:
+	Each tree now has it own day cycle tick.
+	Added Zap Apple Wood Doors
+	Zap Apple Logs and Planks no longer craft like normal wood
+	Zap Apple Dead Logs craft into normal planks
+	TODO: Fix jam animation
+	TODO: Give Dough a Lava like animation
+	TODO: Give Zap Apple Logs and Planks an "shocking effect animation"
+	

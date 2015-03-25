@@ -118,8 +118,6 @@ public class BlockCake extends BlockContainer
 				{
 					CakeIngredientMap val = (CakeIngredientMap) ent.getValue();
 					
-					FMLLog.info( current + " <> " + val.activator );
-					
 					if ( ( val.activator != null ) && ( current.getItem() == val.activator.getItem() ) && current.getItemDamage() == val.activator.getItemDamage() )
 					{
 						TileEntityCake cake = (TileEntityCake) world.getTileEntity( x, y, z );
@@ -190,12 +188,12 @@ public class BlockCake extends BlockContainer
 			world.setBlockToAir( x, y, z );
 		}
 	}
-	
+	/*
 	@Override
 	public Item getItemDropped( int par1, Random rand, int par3 )
 	{
 		return null;
-	}
+	}*/
 	
 	@Override
 	public int quantityDropped( Random rand )

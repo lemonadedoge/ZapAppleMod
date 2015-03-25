@@ -5,7 +5,7 @@ import net.minecraft.util.IIcon;
 
 public class EasyTess
 {
-	//private static final float px = 1F/16F;
+	// private static final float px = 1F/16F;
 	private static int xDimI;
 	private static int zDimI;
 	
@@ -21,7 +21,7 @@ public class EasyTess
 		
 		if ( flag > 5 )
 		{
-			System.out.println( "Wrong flag (" + flag + ")used when using EasyTess! Using flag 0 instead." );
+			System.out.println( "Wrong flag (" + flag + ") used when using EasyTess! Using flag 0 instead." );
 			flag = 0;
 		}
 		
@@ -60,7 +60,7 @@ public class EasyTess
 		
 		if ( flag > 5 )
 		{
-			System.out.println( "Wrong flag (" + flag + ")used when using EasyTess! Using flag 0 instead." );
+			System.out.println( "Wrong flag (" + flag + ") used when using EasyTess! Using flag 0 instead." );
 			flag = 0;
 		}
 		
@@ -88,6 +88,21 @@ public class EasyTess
 	public static void renderCube( double x, double y, double z, int xDim, int yDim, int zDim, int offsetU, int offsetV, IIcon icon, int flag )
 	{
 		renderCube( x, y, z, xDim, yDim, zDim, offsetU, offsetV, icon, flag, 16, 16 );
+	}
+	
+	public static void renderPosX( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double offsetU, double offsetV, IIcon icon, int flag )
+	{
+		double minU = icon.getMinU();
+		double maxU = icon.getMaxU();
+		double minV = icon.getMinV();
+		double maxV = icon.getMaxV();
+		double pu = ( maxU - minU ) / 16;
+		double pv = ( maxV - minV ) / 16;
+		
+		double U = minU + offsetU * pu;
+		double V = minV + offsetV * pv;
+		
+		renderPosX( tes, x, y, z, xDim, yDim, zDim, U, V, pu, pv, flag );
 	}
 	
 	public static void renderPosX( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double u, double v, double pu, double pv, int flag )
@@ -128,6 +143,21 @@ public class EasyTess
 		tes.addVertexWithUV( x, y, z + zDim, maxU, maxV );
 	}
 	
+	public static void renderNegX( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double offsetU, double offsetV, IIcon icon, int flag )
+	{
+		double minU = icon.getMinU();
+		double maxU = icon.getMaxU();
+		double minV = icon.getMinV();
+		double maxV = icon.getMaxV();
+		double pu = ( maxU - minU ) / 16;
+		double pv = ( maxV - minV ) / 16;
+		
+		double U = minU + offsetU * pu;
+		double V = minV + offsetV * pv;
+		
+		renderNegX( tes, x, y, z, xDim, yDim, zDim, U, V, pu, pv, flag );
+	}
+	
 	public static void renderNegX( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double u, double v, double pu, double pv, int flag )
 	{
 		switch ( flag )
@@ -163,6 +193,21 @@ public class EasyTess
 		tes.addVertexWithUV( x, y + yDim, z + zDim, maxU, v );
 		tes.addVertexWithUV( x, y + yDim, z, u, v );
 		tes.addVertexWithUV( x, y, z, u, maxV );
+	}
+	
+	public static void renderPosZ( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double offsetU, double offsetV, IIcon icon, int flag )
+	{
+		double minU = icon.getMinU();
+		double maxU = icon.getMaxU();
+		double minV = icon.getMinV();
+		double maxV = icon.getMaxV();
+		double pu = ( maxU - minU ) / 16;
+		double pv = ( maxV - minV ) / 16;
+		
+		double U = minU + offsetU * pu;
+		double V = minV + offsetV * pv;
+		
+		renderPosZ( tes, x, y, z, xDim, yDim, zDim, U, V, pu, pv, flag );
 	}
 	
 	public static void renderPosZ( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double u, double v, double pu, double pv, int flag )
@@ -204,6 +249,21 @@ public class EasyTess
 		tes.addVertexWithUV( x - xDim, y, z, maxU, maxV );
 	}
 	
+	public static void renderNegZ( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double offsetU, double offsetV, IIcon icon, int flag )
+	{
+		double minU = icon.getMinU();
+		double maxU = icon.getMaxU();
+		double minV = icon.getMinV();
+		double maxV = icon.getMaxV();
+		double pu = ( maxU - minU ) / 16;
+		double pv = ( maxV - minV ) / 16;
+		
+		double U = minU + offsetU * pu;
+		double V = minV + offsetV * pv;
+		
+		renderNegZ( tes, x, y, z, xDim, yDim, zDim, U, V, pu, pv, flag );
+	}
+	
 	public static void renderNegZ( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double u, double v, double pu, double pv, int flag )
 	{
 		x += xDim * 0.0625D;
@@ -240,6 +300,21 @@ public class EasyTess
 		tes.addVertexWithUV( x - xDim, y + yDim, z, maxU, v );
 		tes.addVertexWithUV( x, y + yDim, z, u, v );
 		tes.addVertexWithUV( x, y, z, u, maxV );
+	}
+	
+	public static void renderPosY( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double offsetU, double offsetV, IIcon icon, int flag )
+	{
+		double minU = icon.getMinU();
+		double maxU = icon.getMaxU();
+		double minV = icon.getMinV();
+		double maxV = icon.getMaxV();
+		double pu = ( maxU - minU ) / 16;
+		double pv = ( maxV - minV ) / 16;
+		
+		double U = minU + offsetU * pu;
+		double V = minV + offsetV * pv;
+		
+		renderPosY( tes, x, y, z, xDim, yDim, zDim, U, V, pu, pv, flag );
 	}
 	
 	public static void renderPosY( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double u, double v, double pu, double pv, int flag )
@@ -354,6 +429,21 @@ public class EasyTess
 			}
 			tes.addVertexWithUV( x + xDim, y, z, U, V );
 		}
+	}
+	
+	public static void renderNegY( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double offsetU, double offsetV, IIcon icon, int flag )
+	{
+		double minU = icon.getMinU();
+		double maxU = icon.getMaxU();
+		double minV = icon.getMinV();
+		double maxV = icon.getMaxV();
+		double pu = ( maxU - minU ) / 16;
+		double pv = ( maxV - minV ) / 16;
+		
+		double U = minU + offsetU * pu;
+		double V = minV + offsetV * pv;
+		
+		renderNegY( tes, x, y, z, xDim, yDim, zDim, U, V, pu, pv, flag );
 	}
 	
 	public static void renderNegY( Tessellator tes, double x, double y, double z, double xDim, double yDim, double zDim, double u, double v, double pu, double pv, int flag )

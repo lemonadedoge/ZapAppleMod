@@ -11,3 +11,4 @@ config/
 /saves
 /server.properties
 /crash-reports
+/usernamecache.json

@@ -15,36 +15,50 @@ import net.minecraft.tileentity.TileEntity;
 
 import com.chiorichan.ZapApples.OrderedTriple;
 import com.chiorichan.ZapApples.ZapApples;
+import com.chiorichan.ZapApples.events.DayChangeListener;
 import com.chiorichan.ZapApples.events.DaytimeManager;
 import com.chiorichan.ZapApples.network.PacketHandler;
 import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileEntityZapAppleLog extends TileEntity
+public class TileEntityZapAppleLog extends TileEntity implements DayChangeListener
 {
 	private Random rand;
 	private int index;
 	private int delay;
 	private List<OrderedTriple> leafCopy;
 	private List<OrderedTriple> appleCopy;
-	public boolean isFunctional;
 	public boolean[] finished;
 	public List<OrderedTriple> leafPositions;
 	public List<OrderedTriple> logPositions;
 	public HashMap<OrderedTriple, Integer> applePositions;
+	public int day;
 	
-	public void setIsFunctional()
+	public TileEntityZapAppleLog()
 	{
-		isFunctional = true;
+		DaytimeManager.registerListener( this, worldObj );
+		resetValues();
+	}
+	
+	public void resetValues()
+	{
 		leafPositions = Lists.newLinkedList();
 		logPositions = Lists.newLinkedList();
 		applePositions = Maps.newHashMap();
 		finished = new boolean[6];
 		delay = 5;
 		rand = new Random();
+		day = 0;
+	}
+	
+	@Override
+	public void onDayChange()
+	{
+		day++;
 	}
 	
 	@Override
@@ -54,12 +68,13 @@ public class TileEntityZapAppleLog extends TileEntity
 	}
 	
 	@Override
+	@SideOnly( Side.SERVER )
 	public void updateEntity()
 	{
-		if ( ( isFunctional ) && ( --delay <= 0 ) && !worldObj.isRemote )
+		if ( --delay <= 0 && !worldObj.isRemote )
 		{
 			delay = 10;
-			int day = DaytimeManager.getDay( worldObj );
+			// int day = DaytimeManager.getDay( worldObj );
 			if ( day == 0 )
 			{
 				finished[0] = false;
@@ -183,7 +198,10 @@ public class TileEntityZapAppleLog extends TileEntity
 					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.grayApple )
 					{
 						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapApple, 0, 2 );
-						PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple, 0 ), worldObj.provider.dimensionId );
+						// PacketHandler.getDispatcher().sendToDimension( new
+						// SendEffectsPacket( 1, pos.getX(), pos.getY(),
+						// pos.getZ(), ZapApples.grayApple, 0 ),
+						// worldObj.provider.dimensionId );
 						ZapApples.zapApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 						if ( rand.nextBoolean() )
 						{
@@ -228,40 +246,36 @@ public class TileEntityZapAppleLog extends TileEntity
 	{
 		super.readFromNBT( tag );
 		
-		isFunctional = tag.getBoolean( "isFunctional" );
+		resetValues();
+		index = tag.getInteger( "index" );
+		day = tag.getInteger( "day" );
 		
-		if ( isFunctional )
+		finished[0] = tag.getBoolean( "finished[0]" );
+		finished[1] = tag.getBoolean( "finished[1]" );
+		finished[2] = tag.getBoolean( "finished[2]" );
+		finished[3] = tag.getBoolean( "finished[3]" );
+		finished[4] = tag.getBoolean( "finished[4]" );
+		finished[5] = tag.getBoolean( "finished[5]" );
+		
+		NBTTagCompound leaves = tag.getCompoundTag( "leaves" );
+		int leafSize = leaves.getInteger( "size" );
+		for ( int i = 0; i < leafSize; i++ )
 		{
-			setIsFunctional();
-			index = tag.getInteger( "index" );
-			
-			finished[0] = tag.getBoolean( "finished[0]" );
-			finished[1] = tag.getBoolean( "finished[1]" );
-			finished[2] = tag.getBoolean( "finished[2]" );
-			finished[3] = tag.getBoolean( "finished[3]" );
-			finished[4] = tag.getBoolean( "finished[4]" );
-			finished[5] = tag.getBoolean( "finished[5]" );
-			
-			NBTTagCompound leaves = tag.getCompoundTag( "leaves" );
-			int leafSize = leaves.getInteger( "size" );
-			for ( int i = 0; i < leafSize; i++ )
-			{
-				leafPositions.add( OrderedTriple.valueOf( leaves.getString( "" + i ) ) );
-			}
-			
-			NBTTagCompound logs = tag.getCompoundTag( "logs" );
-			int logSize = logs.getInteger( "size" );
-			for ( int i = 0; i < logSize; i++ )
-			{
-				logPositions.add( OrderedTriple.valueOf( logs.getString( "" + i ) ) );
-			}
-			
-			NBTTagCompound apples = tag.getCompoundTag( "apples" );
-			int appleSize = apples.getInteger( "size" );
-			for ( int i = 0; i < appleSize; i++ )
-			{
-				applePositions.put( OrderedTriple.valueOf( apples.getString( "key:" + i ) ), Integer.valueOf( apples.getInteger( "value:" + i ) ) );
-			}
+			leafPositions.add( OrderedTriple.valueOf( leaves.getString( "" + i ) ) );
+		}
+		
+		NBTTagCompound logs = tag.getCompoundTag( "logs" );
+		int logSize = logs.getInteger( "size" );
+		for ( int i = 0; i < logSize; i++ )
+		{
+			logPositions.add( OrderedTriple.valueOf( logs.getString( "" + i ) ) );
+		}
+		
+		NBTTagCompound apples = tag.getCompoundTag( "apples" );
+		int appleSize = apples.getInteger( "size" );
+		for ( int i = 0; i < appleSize; i++ )
+		{
+			applePositions.put( OrderedTriple.valueOf( apples.getString( "key:" + i ) ), Integer.valueOf( apples.getInteger( "value:" + i ) ) );
 		}
 	}
 	
@@ -269,45 +283,41 @@ public class TileEntityZapAppleLog extends TileEntity
 	{
 		super.writeToNBT( tag );
 		
-		tag.setBoolean( "isFunctional", isFunctional );
+		tag.setInteger( "index", index );
+		tag.setInteger( "day", day );
 		
-		if ( isFunctional )
+		tag.setBoolean( "finished[0]", finished[0] );
+		tag.setBoolean( "finished[1]", finished[1] );
+		tag.setBoolean( "finished[2]", finished[2] );
+		tag.setBoolean( "finished[3]", finished[3] );
+		tag.setBoolean( "finished[4]", finished[4] );
+		tag.setBoolean( "finished[5]", finished[5] );
+		
+		NBTTagCompound leaves = new NBTTagCompound();
+		leaves.setInteger( "size", leafPositions.size() );
+		for ( int i = 0; i < leafPositions.size(); i++ )
 		{
-			tag.setInteger( "index", index );
-			
-			tag.setBoolean( "finished[0]", finished[0] );
-			tag.setBoolean( "finished[1]", finished[1] );
-			tag.setBoolean( "finished[2]", finished[2] );
-			tag.setBoolean( "finished[3]", finished[3] );
-			tag.setBoolean( "finished[4]", finished[4] );
-			tag.setBoolean( "finished[5]", finished[5] );
-			
-			NBTTagCompound leaves = new NBTTagCompound();
-			leaves.setInteger( "size", leafPositions.size() );
-			for ( int i = 0; i < leafPositions.size(); i++ )
-			{
-				leaves.setString( "" + i, ( (OrderedTriple) leafPositions.get( i ) ).toString() );
-			}
-			tag.setTag( "leaves", leaves );
-			
-			NBTTagCompound logs = new NBTTagCompound();
-			logs.setInteger( "size", logPositions.size() );
-			for ( int i = 0; i < logPositions.size(); i++ )
-			{
-				logs.setString( "" + i, ( (OrderedTriple) logPositions.get( i ) ).toString() );
-			}
-			tag.setTag( "logs", logs );
-			
-			NBTTagCompound apples = new NBTTagCompound();
-			List<OrderedTriple> temp = new ArrayList<OrderedTriple>( applePositions.keySet() );
-			apples.setInteger( "size", temp.size() );
-			for ( int i = 0; i < temp.size(); i++ )
-			{
-				apples.setString( "key:" + i, ( (OrderedTriple) temp.get( i ) ).toString() );
-				apples.setInteger( "value:" + i, ( (Integer) applePositions.get( temp.get( i ) ) ).intValue() );
-			}
-			tag.setTag( "apples", apples );
+			leaves.setString( "" + i, ( (OrderedTriple) leafPositions.get( i ) ).toString() );
 		}
+		tag.setTag( "leaves", leaves );
+		
+		NBTTagCompound logs = new NBTTagCompound();
+		logs.setInteger( "size", logPositions.size() );
+		for ( int i = 0; i < logPositions.size(); i++ )
+		{
+			logs.setString( "" + i, ( (OrderedTriple) logPositions.get( i ) ).toString() );
+		}
+		tag.setTag( "logs", logs );
+		
+		NBTTagCompound apples = new NBTTagCompound();
+		List<OrderedTriple> temp = new ArrayList<OrderedTriple>( applePositions.keySet() );
+		apples.setInteger( "size", temp.size() );
+		for ( int i = 0; i < temp.size(); i++ )
+		{
+			apples.setString( "key:" + i, ( (OrderedTriple) temp.get( i ) ).toString() );
+			apples.setInteger( "value:" + i, ( (Integer) applePositions.get( temp.get( i ) ) ).intValue() );
+		}
+		tag.setTag( "apples", apples );
 	}
 	
 	@Override
@@ -330,15 +340,20 @@ public class TileEntityZapAppleLog extends TileEntity
 		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
 	}
 	
-	public void killAllLogs()
+	public void notifyRemoval()
 	{
+		DaytimeManager.unregisterListener( this );
+		
 		for ( OrderedTriple pos : logPositions )
 		{
 			int meta = worldObj.getBlockMetadata( pos.getX(), pos.getY(), pos.getZ() );
 			if ( meta < 0 )
 				meta = 0;
-			worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleDeadLog, meta, 0 );
-			worldObj.markBlockForUpdate( pos.getX(), pos.getY(), pos.getZ() );
+			if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleLog )
+			{
+				worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleDeadLog, meta, 0 );
+				worldObj.markBlockForUpdate( pos.getX(), pos.getY(), pos.getZ() );
+			}
 		}
 	}
 }

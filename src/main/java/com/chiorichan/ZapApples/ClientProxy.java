@@ -2,10 +2,11 @@ package com.chiorichan.ZapApples;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.chiorichan.ZapApples.entity.EntityMeteor;
-import com.chiorichan.ZapApples.events.DaytimeManager;
 import com.chiorichan.ZapApples.events.GeneralEventHandler;
 import com.chiorichan.ZapApples.events.SoundHandler;
 import com.chiorichan.ZapApples.mobs.EntityTimberWolf;
@@ -14,6 +15,7 @@ import com.chiorichan.ZapApples.render.Render2D;
 import com.chiorichan.ZapApples.render.Render3D;
 import com.chiorichan.ZapApples.render.RenderApple;
 import com.chiorichan.ZapApples.render.RenderCake;
+import com.chiorichan.ZapApples.render.RenderCakeItem;
 import com.chiorichan.ZapApples.render.RenderMeteor;
 import com.chiorichan.ZapApples.render.RenderPie;
 import com.chiorichan.ZapApples.render.RenderTimberWolf;
@@ -32,10 +34,13 @@ public class ClientProxy extends CommonProxy
 		
 		RenderingRegistry.registerEntityRenderingHandler( EntityTimberWolf.class, new RenderTimberWolf( new ModelTimberWolf(), 0.5F ) );
 		
+		MinecraftForge.EVENT_BUS.register( new GeneralEventHandler() );
 		MinecraftForge.EVENT_BUS.register( new SoundHandler() );
 		
 		ClientRegistry.bindTileEntitySpecialRenderer( TileEntityPie.class, new RenderPie() );
 		RenderingRegistry.registerEntityRenderingHandler( EntityMeteor.class, new RenderMeteor() );
+		
+		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.cake ).getItem(), new RenderCakeItem() );
 		
 		new Render2D();
 		new Render3D();

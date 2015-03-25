@@ -133,10 +133,7 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 		if ( _tile != null && _tile instanceof TileEntityZapAppleLog )
 		{
 			TileEntityZapAppleLog tile = (TileEntityZapAppleLog) _tile;
-			if ( tile.isFunctional )
-			{
-				tile.killAllLogs();
-			}
+			tile.notifyRemoval();
 		}
 	}
 	
