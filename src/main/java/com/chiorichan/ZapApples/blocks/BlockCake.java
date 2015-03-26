@@ -1,6 +1,5 @@
 package com.chiorichan.ZapApples.blocks;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,10 +12,8 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
@@ -25,9 +22,7 @@ import net.minecraft.world.World;
 
 import com.chiorichan.ZapApples.ZapApples;
 import com.chiorichan.ZapApples.tileentity.TileEntityCake;
-import com.chiorichan.ZapApples.tileentity.TileEntityJar;
 import com.chiorichan.ZapApples.util.InventoryUtil;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLLog;
@@ -127,10 +122,7 @@ public class BlockCake extends BlockContainer
 							cake.setData( cake.base, val.key, cake.stage );
 							
 							if ( !player.capabilities.isCreativeMode )
-							{
 								player.inventory.setInventorySlotContents( player.inventory.currentItem, InventoryUtil.consumeItem( current ) );
-							}
-							world.markBlockForUpdate( x, y, z ); // XXX RenderUpdate - Is this right?
 							
 							break;
 						}
@@ -188,12 +180,6 @@ public class BlockCake extends BlockContainer
 			world.setBlockToAir( x, y, z );
 		}
 	}
-	/*
-	@Override
-	public Item getItemDropped( int par1, Random rand, int par3 )
-	{
-		return null;
-	}*/
 	
 	@Override
 	public int quantityDropped( Random rand )

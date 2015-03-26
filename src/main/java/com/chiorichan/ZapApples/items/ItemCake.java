@@ -13,7 +13,7 @@ import com.chiorichan.ZapApples.ZapApples;
 
 public class ItemCake extends ItemBlock
 {
-	public ItemCake( Block block )
+	public ItemCake(Block block)
 	{
 		super( block );
 		setHasSubtypes( true );
@@ -23,6 +23,12 @@ public class ItemCake extends ItemBlock
 	public int getMetadata( int meta )
 	{
 		return meta;
+	}
+	
+	@Override
+	public boolean isFull3D()
+	{
+		return true;
 	}
 	
 	public String getItemDisplayName( ItemStack stack )

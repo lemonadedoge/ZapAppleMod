@@ -3,6 +3,7 @@ package com.chiorichan.ZapApples.network.packet.client;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
 public class SendEffectsPacket implements IMessage
@@ -10,14 +11,19 @@ public class SendEffectsPacket implements IMessage
 	int x, y, z, meta, msgId;
 	Block block;
 	
-	public SendEffectsPacket( int _msgId, int _x, int _y, int _z, Block _block, int _meta)
+	public SendEffectsPacket()
 	{
-		msgId = _msgId;
-		x = _x;
-		y = _y;
-		z = _z;
-		block = _block;
-		meta = _meta;
+		
+	}
+	
+	public SendEffectsPacket( int msgId, int x, int y, int z, Block block, int meta )
+	{
+		this.msgId = msgId;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.block = block;
+		this.meta = meta;
 	}
 	
 	@Override

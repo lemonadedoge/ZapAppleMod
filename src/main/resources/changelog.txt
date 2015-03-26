@@ -1,9 +1,16 @@
-2.4alpha:
-	Each tree now has it own day cycle tick.
-	Added Zap Apple Wood Doors
-	Zap Apple Logs and Planks no longer craft like normal wood
-	Zap Apple Dead Logs craft into normal planks
-	TODO: Fix jam animation
-	TODO: Give Dough a Lava like animation
-	TODO: Give Zap Apple Logs and Planks an "shocking effect animation"
-	
+2.4alpha
+* FIXED: Tanks now render their fluid levels in inventory, item frames and as drops (FINALLY!!!)
+2.3alpha:
+* ADDITION: Dimensions can now be blacklisted for Zap Apple Tree generation from configurations
+* ADDITION: Biomes can now be blacklisted for Zap Apple Tree generation from configurations
+* ADDITION: Added Zap Apple Wood Door
+* ADDITION: Added Stone Door (Long Over Due Addition to Minecraft)
+* CHANGE: Each tree now has it own day cycle to resolve issues with trees being unloaded and reloaded mid cycle
+* CHANGE: Zap Apple Logs no longer craft like normal logs
+* CHANGE: Dead Zap Apple Logs craft into oak planks
+* CHANGE: Dough now has an animated texture
+* CHANGE/FIXED: An all new animated texture for Zap Apple Jam that flows in the correct direction and at a slower rate
+* FIXED: Cakes are now properly rendering their frosting in inventory, item frames and as drops
+* FIXED: Apples are now showing the breaking effect when they grow
+* FIXED: Fixed a shading bug found in half the custom renderers
+* FIXED: At the end of the last day, Zap Apples are properly removed from their trees

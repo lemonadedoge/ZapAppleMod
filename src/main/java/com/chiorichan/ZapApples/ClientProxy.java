@@ -16,6 +16,7 @@ import com.chiorichan.ZapApples.render.Render3D;
 import com.chiorichan.ZapApples.render.RenderApple;
 import com.chiorichan.ZapApples.render.RenderCake;
 import com.chiorichan.ZapApples.render.RenderCakeItem;
+import com.chiorichan.ZapApples.render.RenderJarItem;
 import com.chiorichan.ZapApples.render.RenderMeteor;
 import com.chiorichan.ZapApples.render.RenderPie;
 import com.chiorichan.ZapApples.render.RenderTimberWolf;
@@ -41,6 +42,7 @@ public class ClientProxy extends CommonProxy
 		RenderingRegistry.registerEntityRenderingHandler( EntityMeteor.class, new RenderMeteor() );
 		
 		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.cake ).getItem(), new RenderCakeItem() );
+		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.jar ).getItem(), new RenderJarItem() );
 		
 		new Render2D();
 		new Render3D();

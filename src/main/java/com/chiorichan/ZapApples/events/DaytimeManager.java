@@ -1,11 +1,12 @@
 package com.chiorichan.ZapApples.events;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -16,7 +17,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 public class DaytimeManager
 {
 	public static Map<World, DaytimeWatcher> watchers = Maps.newHashMap();
-	public static Map<DayChangeListener, World> listeners = Maps.newHashMap();
+	public static List<DayChangeListener> listeners = Lists.newArrayList();
 	
 	public DaytimeManager()
 	{
@@ -26,10 +27,19 @@ public class DaytimeManager
 	@SubscribeEvent
 	public void onWorldTick( TickEvent.WorldTickEvent event )
 	{
-		if ( !watchers.containsKey( event.world ) )
-			watchers.put( event.world, new DaytimeWatcher( event.world ) );
-		
-		watchers.get( event.world ).tick();
+		try
+		{
+			if ( !watchers.containsKey( event.world ) )
+				watchers.put( event.world, new DaytimeWatcher( event.world ) );
+			
+			watchers.get( event.world ).tick();
+		}
+		catch ( Exception e )
+		{
+			e.printStackTrace();
+			FMLLog.severe( "[Zap Apples] Would you kindly report this exception to the Zap Apple mod developer!" );
+			// Use this to prevent my mod from crashing someone's game.
+		}
 	}
 	
 	@SubscribeEvent
@@ -43,17 +53,21 @@ public class DaytimeManager
 		listeners.remove( listener );
 	}
 	
-	public static void registerListener( DayChangeListener listener, World forWorld )
+	public static void registerListener( DayChangeListener listener )
 	{
-		listeners.put( listener, forWorld );
+		if ( listener == null )
+			return;
+		
+		if ( !listeners.contains( listener ) )
+			listeners.add( listener );
 	}
 	
 	protected static void onDayChange( World fromWorld )
 	{
-		FMLLog.info( "[ZapApples] The day has changed in world '" + fromWorld.getWorldInfo().getWorldName() + "'" );
+		FMLLog.info( "[Zap Apples] The day has changed in world '" + fromWorld.getWorldInfo().getWorldName() + "'" );
 		
-		for ( Entry<DayChangeListener, World> e : listeners.entrySet() )
-			if ( e.getValue() == fromWorld )
-				e.getKey().onDayChange();
+		for ( DayChangeListener l : listeners )
+			if ( l.getWorld() != null && l.getWorld() == fromWorld )
+				l.onDayChange();
 	}
 }

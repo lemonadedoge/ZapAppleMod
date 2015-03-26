@@ -1,21 +1,22 @@
 package com.chiorichan.ZapApples.blocks;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import com.chiorichan.ZapApples.ZapApples;
-import com.google.common.collect.Lists;
+import com.chiorichan.ZapApples.network.PacketHandler;
+import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -38,6 +39,7 @@ public class BlockGrayApple extends Block
 		setBlockBounds( var12, 0.25F, var12, 1.0F - var12, 0.75F, 1.0F - var12 );
 	}
 	
+	@Override
 	public void setBlockBoundsBasedOnState( IBlockAccess world, int x, int y, int z )
 	{
 		int meta = world.getBlockMetadata( x, y, z );
@@ -69,17 +71,20 @@ public class BlockGrayApple extends Block
 		}
 	}
 	
+	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool( World par1World, int par2, int par3, int par4 )
 	{
 		setBlockBoundsBasedOnState( par1World, par2, par3, par4 );
 		return super.getCollisionBoundingBoxFromPool( par1World, par2, par3, par4 );
 	}
 	
+	@Override
 	public IIcon getIcon( int side, int meta )
 	{
 		return icon;
 	}
 	
+	@Override
 	@SideOnly( Side.CLIENT )
 	public void registerBlockIcons( IIconRegister register )
 	{
@@ -88,7 +93,7 @@ public class BlockGrayApple extends Block
 	
 	private boolean canAppleStay( World world, int x, int y, int z )
 	{
-		return ( isBlockAt( world, x + 1, y, z ) ) || ( isBlockAt( world, x - 1, y, z ) ) || ( isBlockAt( world, x, y + 1, z ) ) || ( isBlockAt( world, x, y - 1, z ) ) || ( isBlockAt( world, x, y, z + 1 ) ) || ( isBlockAt( world, x, y, z - 1 ) );
+		return isBlockAt( world, x + 1, y, z ) || isBlockAt( world, x - 1, y, z ) || isBlockAt( world, x, y + 1, z ) || isBlockAt( world, x, y - 1, z ) || isBlockAt( world, x, y, z + 1 ) || isBlockAt( world, x, y, z - 1 );
 	}
 	
 	private boolean isBlockAt( World world, int x, int y, int z )
@@ -97,33 +102,45 @@ public class BlockGrayApple extends Block
 		return b == ZapApples.zapAppleLeaves;
 	}
 	
-	public void onNeighborBlockChange( World world, int x, int y, int z, int meta )
+	@Override
+	public void onNeighborBlockChange( World world, int x, int y, int z, Block block )
 	{
-		if ( ( !world.isRemote ) && ( !canAppleStay( world, x, y, z ) ) )
+		if ( !world.isRemote && !canAppleStay( world, x, y, z ) )
 		{
 			dropBlockAsItem( world, x, y, z, 0, 0 );
+			PacketHandler.sendToDimension( new SendEffectsPacket( 0, x, y, z, ZapApples.zapApple, 0 ), world.provider.dimensionId );
 			world.setBlockToAir( x, y, z );
 		}
 	}
 	
+	@Override
 	public boolean isOpaqueCube()
 	{
 		return false;
 	}
 	
+	@Override
 	public boolean renderAsNormalBlock()
 	{
 		return false;
 	}
 	
+	@Override
 	public int getRenderType()
 	{
 		return ZapApples.idRenderApple;
 	}
 	
+	@Override
 	public int quantityDropped( Random rand )
 	{
 		return 0;
+	}
+	
+	@Override
+	public Item getItemDropped( int par1, Random rand, int par3 )
+	{
+		return null;
 	}
 	
 	public void updateBlockMetadata( World world, int x, int y, int z, int side, float par6, float par7, float par8 )
@@ -149,12 +166,5 @@ public class BlockGrayApple extends Block
 		{
 			world.setBlock( x, y, z, world.getBlock( x, y, z ), meta, 0 );
 		}
-	}
-	
-	public ArrayList<ItemStack> getBlockDropped( World world, int x, int y, int z, int metadata, int fortune )
-	{
-		ArrayList<ItemStack> result = Lists.newArrayList();
-		result.add( new ItemStack( this, 1, 0 ) );
-		return result;
 	}
 }

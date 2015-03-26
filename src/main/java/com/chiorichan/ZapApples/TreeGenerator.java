@@ -17,7 +17,7 @@ public class TreeGenerator implements IWorldGenerator
 		if ( !ZapApples.disableZapAppleTreesInDimensions.contains( world.provider.dimensionId ) )
 		{
 			BiomeGenBase b = world.getBiomeGenForCoords( chunkX * 16, chunkZ * 16 );
-			if ( ( b != null ) && ( b.biomeName != null ) && ( ( b.biomeName.equalsIgnoreCase( "Savanna" ) ) || ( b.biomeName.equalsIgnoreCase( "Forest" ) ) || ( b.biomeName.equalsIgnoreCase( "Taiga" ) ) || ( b.biomeName.equalsIgnoreCase( "Sky" ) ) || ( b.biomeName.equalsIgnoreCase( "ForestHills" ) ) || ( b.biomeName.equalsIgnoreCase( "TaigaHills" ) ) || ( b.biomeName.equalsIgnoreCase( "Jungle" ) ) || ( b.biomeName.equalsIgnoreCase( "JungleHills" ) ) || ( b.biomeName.equalsIgnoreCase( "Swampland" ) ) ) )
+			if ( b != null && !ZapApples.disableZapAppleTreesInBiomes.contains( b.biomeID ) )
 			{
 				if ( rand.nextInt( 70 ) == 1 )
 				{

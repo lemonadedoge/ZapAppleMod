@@ -82,6 +82,7 @@ public class Render3D implements ISimpleBlockRenderingHandler
 			}
 			var5.setColorOpaque_F( var6 * var8, var6 * var9, var6 * var10 );
 		}
+		
 		IIcon iconLidTop = ZapApples.jar.textureTop;
 		IIcon iconSide = ZapApples.jar.textureSide;
 		IIcon iconBottom = ZapApples.jar.textureBottom;

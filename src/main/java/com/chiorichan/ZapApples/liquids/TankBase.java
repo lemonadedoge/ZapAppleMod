@@ -1,6 +1,5 @@
 package com.chiorichan.ZapApples.liquids;
 
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;

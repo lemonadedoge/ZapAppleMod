@@ -24,8 +24,6 @@ import com.chiorichan.ZapApples.liquids.TankBase;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.FMLLog;
-
 public class TileEntityJar extends TileEntity implements IFluidHandler
 {
 	private TankBase tank = new TankBase( getTankCapacity(), "Jar", new FluidStack[0] );
@@ -35,7 +33,7 @@ public class TileEntityJar extends TileEntity implements IFluidHandler
 	public HashMap<ForgeDirection, WeakReference<TileEntityJar>> neighbours = Maps.newHashMap();
 	public HashMap<ForgeDirection, Boolean> surroundingBlocks = Maps.newHashMap();
 	
-	public static final ForgeDirection[] horizontalDirections = { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
+	public static final ForgeDirection[] horizontalDirections = {ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST};
 	
 	protected Comparator<TileEntityJar> sortBySpace = new Comparator<TileEntityJar>()
 	{
@@ -52,7 +50,7 @@ public class TileEntityJar extends TileEntity implements IFluidHandler
 	
 	public boolean hasBlockOnSide( ForgeDirection side )
 	{
-		return ( surroundingBlocks.containsKey( side ) ) && ( ( (Boolean) surroundingBlocks.get( side ) ).booleanValue() );
+		return ( surroundingBlocks.containsKey( side ) ) && ( ( ( Boolean ) surroundingBlocks.get( side ) ).booleanValue() );
 	}
 	
 	public TileEntityJar getTankInDirection( ForgeDirection direction )
@@ -62,7 +60,7 @@ public class TileEntityJar extends TileEntity implements IFluidHandler
 			WeakReference<TileEntityJar> neighbour = neighbours.get( direction );
 			if ( neighbour != null )
 			{
-				TileEntityJar otherTank = (TileEntityJar) neighbour.get();
+				TileEntityJar otherTank = ( TileEntityJar ) neighbour.get();
 				if ( otherTank == null )
 				{
 					return null;
@@ -91,7 +89,7 @@ public class TileEntityJar extends TileEntity implements IFluidHandler
 				tanks.add( t );
 			}
 		}
-		return (TileEntityJar[]) tanks.toArray( new TileEntityJar[tanks.size()] );
+		return ( TileEntityJar[] ) tanks.toArray( new TileEntityJar[tanks.size()] );
 	}
 	
 	public ArrayList<TileEntityJar> getHorizontalTanksOrdererdBySpace( HashSet<TileEntityJar> except )
@@ -265,7 +263,8 @@ public class TileEntityJar extends TileEntity implements IFluidHandler
 				return fluid.getFluid().getLuminosity();
 			}
 			catch ( Exception e )
-			{}
+			{
+			}
 		}
 		return 0;
 	}

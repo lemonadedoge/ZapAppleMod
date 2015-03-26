@@ -1,6 +1,7 @@
 package com.chiorichan.ZapApples.render;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
@@ -49,7 +50,7 @@ public class RenderApple implements ISimpleBlockRenderingHandler
 	
 	public void renderApple( Block block, int meta )
 	{
-		Tessellator tessellator = Tessellator.instance;
+		//Tessellator tessellator = Tessellator.instance;
 		IIcon icon = block.getBlockTextureFromSide( 0 );
 		
 		float x = 0.5F;
@@ -59,33 +60,33 @@ public class RenderApple implements ISimpleBlockRenderingHandler
 		switch ( meta )
 		{
 			case 0:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z + 0.25D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z + 0.25D );
 				break;
 			case 1:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z + 0.6D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z + 0.6D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 4:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z - 0.1D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z - 0.1D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 8:
-				x = (float) ( x + 0.6D );
-				z = (float) ( z + 0.25D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x + 0.6D );
+				z = ( float ) ( z + 0.25D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 2:
-				x = (float) ( x - 0.1D );
-				z = (float) ( z + 0.25D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x - 0.1D );
+				z = ( float ) ( z + 0.25D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 10:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z + 0.25D );
-				y = (float) ( y + 0.5D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z + 0.25D );
+				y = ( float ) ( y + 0.5D );
 			case 3:
 			case 5:
 			case 6:
@@ -99,38 +100,56 @@ public class RenderApple implements ISimpleBlockRenderingHandler
 	public void renderApple( IBlockAccess world, float x, float y, float z, Block block, RenderBlocks renderer, int meta )
 	{
 		Tessellator tessellator = Tessellator.instance;
+		
+		tessellator.setBrightness( block.getMixedBrightnessForBlock( world, ( int ) x, ( int ) y, ( int ) z ) );
+		float var6 = 1.0F;
+		int var7 = block.colorMultiplier( world, ( int ) x, ( int ) y, ( int ) z );
+		float var8 = ( var7 >> 16 & 0xFF ) / 255.0F;
+		float var9 = ( var7 >> 8 & 0xFF ) / 255.0F;
+		float var10 = ( var7 & 0xFF ) / 255.0F;
+		if ( EntityRenderer.anaglyphEnable )
+		{
+			float var11 = ( var8 * 30.0F + var9 * 59.0F + var10 * 11.0F ) / 100.0F;
+			float var12 = ( var8 * 30.0F + var9 * 70.0F ) / 100.0F;
+			float var13 = ( var8 * 30.0F + var10 * 70.0F ) / 100.0F;
+			var8 = var11;
+			var9 = var12;
+			var10 = var13;
+		}
+		tessellator.setColorOpaque_F( var6 * var8, var6 * var9, var6 * var10 );
+		
 		IIcon icon = block.getBlockTextureFromSide( 0 );
 		
 		switch ( meta )
 		{
 			case 0:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z + 0.25D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z + 0.25D );
 				break;
 			case 1:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z + 0.6D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z + 0.6D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 4:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z - 0.1D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z - 0.1D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 8:
-				x = (float) ( x + 0.6D );
-				z = (float) ( z + 0.25D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x + 0.6D );
+				z = ( float ) ( z + 0.25D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 2:
-				x = (float) ( x - 0.1D );
-				z = (float) ( z + 0.25D );
-				y = (float) ( y + 0.25D );
+				x = ( float ) ( x - 0.1D );
+				z = ( float ) ( z + 0.25D );
+				y = ( float ) ( y + 0.25D );
 				break;
 			case 10:
-				x = (float) ( x + 0.25D );
-				z = (float) ( z + 0.25D );
-				y = (float) ( y + 0.5D );
+				x = ( float ) ( x + 0.25D );
+				z = ( float ) ( z + 0.25D );
+				y = ( float ) ( y + 0.5D );
 			case 3:
 			case 5:
 			case 6:

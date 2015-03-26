@@ -19,7 +19,7 @@ public class TileEntityCake extends TileEntity
 		player.getFoodStats().addStats( 5, 0.5F );
 		if ( stage + 1 >= 6 )
 		{
-			//getBlockType().breakBlock( worldObj, xCoord, yCoord, zCoord, 0, getBlockMetadata() );
+			// getBlockType().breakBlock( worldObj, xCoord, yCoord, zCoord, 0, getBlockMetadata() );
 			worldObj.setBlockToAir( xCoord, yCoord, zCoord );
 		}
 		else
@@ -34,6 +34,8 @@ public class TileEntityCake extends TileEntity
 		frost = up;
 		stage = ( (short) s );
 		hasUpdate = true;
+		
+		markForUpdate();
 	}
 	
 	@Override
@@ -44,7 +46,7 @@ public class TileEntityCake extends TileEntity
 	
 	public void updateEntity()
 	{
-		if ( ( !worldObj.isRemote ) && ( hasUpdate ) )
+		if ( !worldObj.isRemote && hasUpdate )
 		{
 			worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
 			hasUpdate = false;
@@ -68,7 +70,10 @@ public class TileEntityCake extends TileEntity
 	
 	public void markForUpdate()
 	{
-		worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
+		if ( !worldObj.isRemote )
+			hasUpdate = true;
+		else
+			worldObj.markBlockForUpdate( xCoord, yCoord, zCoord );
 	}
 	
 	public void readFromNBT( NBTTagCompound tag )

@@ -12,6 +12,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import com.chiorichan.ZapApples.OrderedTriple;
 import com.chiorichan.ZapApples.ZapApples;
@@ -22,17 +23,14 @@ import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 public class TileEntityZapAppleLog extends TileEntity implements DayChangeListener
 {
 	private Random rand;
 	private int index;
 	private int delay;
+	public boolean[] finished;
 	private List<OrderedTriple> leafCopy;
 	private List<OrderedTriple> appleCopy;
-	public boolean[] finished;
 	public List<OrderedTriple> leafPositions;
 	public List<OrderedTriple> logPositions;
 	public HashMap<OrderedTriple, Integer> applePositions;
@@ -40,7 +38,7 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 	
 	public TileEntityZapAppleLog()
 	{
-		DaytimeManager.registerListener( this, worldObj );
+		DaytimeManager.registerListener( this );
 		resetValues();
 	}
 	
@@ -68,13 +66,12 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 	}
 	
 	@Override
-	@SideOnly( Side.SERVER )
 	public void updateEntity()
 	{
 		if ( --delay <= 0 && !worldObj.isRemote )
 		{
 			delay = 10;
-			// int day = DaytimeManager.getDay( worldObj );
+			
 			if ( day == 0 )
 			{
 				finished[0] = false;
@@ -111,7 +108,7 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 				}
 				else
 				{
-					OrderedTriple pos = (OrderedTriple) leafCopy.get( index++ );
+					OrderedTriple pos = ( OrderedTriple ) leafCopy.get( index++ );
 					if ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) )
 					{
 						if ( ( ZapApples.lightningEffect ) && ( rand.nextInt( 30 ) == 1 ) )
@@ -140,11 +137,11 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 				}
 				else
 				{
-					OrderedTriple pos = (OrderedTriple) appleCopy.get( index++ );
-					if ( ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) ) && ( ZapApples.zapAppleFlowers.canPlaceBlockOnSide( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue() ) ) )
+					OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index++ );
+					if ( ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) ) && ( ZapApples.zapAppleFlowers.canPlaceBlockOnSide( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue() ) ) )
 					{
 						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers );
-						ZapApples.zapAppleFlowers.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
+						ZapApples.zapAppleFlowers.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 					}
 				}
 			}
@@ -163,12 +160,12 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 				}
 				else
 				{
-					OrderedTriple pos = (OrderedTriple) appleCopy.get( index++ );
+					OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index++ );
 					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleFlowers )
 					{
 						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple );
-						PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers, 0 ), worldObj.provider.dimensionId );
-						ZapApples.grayApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
+						PacketHandler.sendToDimension( new SendEffectsPacket( 0, pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers, 0 ), worldObj.provider.dimensionId );
+						ZapApples.grayApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 					}
 				}
 			}
@@ -194,15 +191,12 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 				}
 				else
 				{
-					OrderedTriple pos = (OrderedTriple) appleCopy.get( index++ );
+					OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index++ );
 					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.grayApple )
 					{
 						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapApple, 0, 2 );
-						// PacketHandler.getDispatcher().sendToDimension( new
-						// SendEffectsPacket( 1, pos.getX(), pos.getY(),
-						// pos.getZ(), ZapApples.grayApple, 0 ),
-						// worldObj.provider.dimensionId );
-						ZapApples.zapApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( (Integer) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
+						PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple, 0 ), worldObj.provider.dimensionId );
+						ZapApples.zapApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 						if ( rand.nextBoolean() )
 						{
 							int x = xCoord + rand.nextInt( 21 ) - 9;
@@ -230,7 +224,7 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 				}
 				else
 				{
-					OrderedTriple pos = (OrderedTriple) leafCopy.get( index++ );
+					OrderedTriple pos = ( OrderedTriple ) leafCopy.get( index++ );
 					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleLeaves )
 					{
 						ZapApples.zapAppleLeaves.removeLeaves( worldObj, pos.getX(), pos.getY(), pos.getZ() );
@@ -297,7 +291,7 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 		leaves.setInteger( "size", leafPositions.size() );
 		for ( int i = 0; i < leafPositions.size(); i++ )
 		{
-			leaves.setString( "" + i, ( (OrderedTriple) leafPositions.get( i ) ).toString() );
+			leaves.setString( "" + i, ( ( OrderedTriple ) leafPositions.get( i ) ).toString() );
 		}
 		tag.setTag( "leaves", leaves );
 		
@@ -305,7 +299,7 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 		logs.setInteger( "size", logPositions.size() );
 		for ( int i = 0; i < logPositions.size(); i++ )
 		{
-			logs.setString( "" + i, ( (OrderedTriple) logPositions.get( i ) ).toString() );
+			logs.setString( "" + i, ( ( OrderedTriple ) logPositions.get( i ) ).toString() );
 		}
 		tag.setTag( "logs", logs );
 		
@@ -314,8 +308,8 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 		apples.setInteger( "size", temp.size() );
 		for ( int i = 0; i < temp.size(); i++ )
 		{
-			apples.setString( "key:" + i, ( (OrderedTriple) temp.get( i ) ).toString() );
-			apples.setInteger( "value:" + i, ( (Integer) applePositions.get( temp.get( i ) ) ).intValue() );
+			apples.setString( "key:" + i, ( ( OrderedTriple ) temp.get( i ) ).toString() );
+			apples.setInteger( "value:" + i, ( ( Integer ) applePositions.get( temp.get( i ) ) ).intValue() );
 		}
 		tag.setTag( "apples", apples );
 	}
@@ -355,5 +349,11 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 				worldObj.markBlockForUpdate( pos.getX(), pos.getY(), pos.getZ() );
 			}
 		}
+	}
+	
+	@Override
+	public World getWorld()
+	{
+		return worldObj;
 	}
 }

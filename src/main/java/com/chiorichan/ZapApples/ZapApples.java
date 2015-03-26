@@ -23,6 +23,7 @@ import com.chiorichan.ZapApples.blocks.BlockFlour;
 import com.chiorichan.ZapApples.blocks.BlockGrayApple;
 import com.chiorichan.ZapApples.blocks.BlockJar;
 import com.chiorichan.ZapApples.blocks.BlockPie;
+import com.chiorichan.ZapApples.blocks.BlockStoneDoor;
 import com.chiorichan.ZapApples.blocks.BlockZapApple;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleDeadLog;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleFlowers;
@@ -38,11 +39,13 @@ import com.chiorichan.ZapApples.items.ItemIcing;
 import com.chiorichan.ZapApples.items.ItemJamFood;
 import com.chiorichan.ZapApples.items.ItemJar;
 import com.chiorichan.ZapApples.items.ItemPie;
+import com.chiorichan.ZapApples.items.ItemStoneDoor;
 import com.chiorichan.ZapApples.items.ItemZapApple;
 import com.chiorichan.ZapApples.items.ItemZapAppleGray;
 import com.chiorichan.ZapApples.items.ItemZapAppleMushed;
 import com.chiorichan.ZapApples.items.ItemZapAppleWoodDoor;
 import com.chiorichan.ZapApples.mobs.EntityTimberWolf;
+import com.chiorichan.ZapApples.network.PacketHandler;
 import com.chiorichan.ZapApples.tileentity.TileEntityCake;
 import com.chiorichan.ZapApples.tileentity.TileEntityJar;
 import com.chiorichan.ZapApples.tileentity.TileEntityPie;
@@ -59,7 +62,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod( modid = ZapApples.MOD_ID, name = "Zap Apple Mod", version = "1.7.10-2.4alpha" )
+@Mod( modid = ZapApples.MOD_ID, name = "Zap Apple Mod", version = "1.7.10-2.3alpha" )
 public class ZapApples
 {
 	public static final String MOD_ID = "zapapples";
@@ -74,7 +77,7 @@ public class ZapApples
 	public static boolean lightningEffect;
 	public static boolean spawnTimberWolves;
 	public static List<Integer> disableZapAppleTreesInDimensions;
-	public static List<Integer> spawnZapAppleTreesInBiomes;
+	public static List<Integer> disableZapAppleTreesInBiomes;
 	public static int idRender2D;
 	public static int idRender3D;
 	public static int idRenderCake;
@@ -91,7 +94,9 @@ public class ZapApples
 	public static BlockJar jar;
 	public static BlockZapApplePlanks zapPlanks;
 	public static BlockZapAppleWoodDoor blockZapWoodDoor;
+	public static BlockStoneDoor blockStoneDoor;
 	public static ItemZapAppleWoodDoor itemZapWoodDoor;
+	public static ItemStoneDoor itemStoneDoor;
 	public static BlockPie pie;
 	public static BlockCake cake;
 	public static BlockFlour flour;
@@ -108,6 +113,8 @@ public class ZapApples
 	@EventHandler
 	public void preInit( FMLPreInitializationEvent event )
 	{
+		PacketHandler.registerPackets();
+		
 		Configuration config = new Configuration( event.getSuggestedConfigurationFile() );
 		try
 		{
@@ -117,20 +124,13 @@ public class ZapApples
 			lightningEffect = config.get( "general", "lightningEffect", true ).getBoolean( true );
 			bucketsPerJar = config.get( "general", "bucketsPerJar", 6 ).getInt( 6 );
 			
-			BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
-			int[] biomeIdArray = new int[biomeArray.length];
-			
-			for ( int i = 0; i < biomeArray.length; i++ )
-				if ( biomeArray[i] != null )
-					biomeIdArray[i] = biomeArray[i].biomeID;
-			
-			spawnZapAppleTreesInBiomes = Lists.newArrayList();
-			for ( int i : config.get( "general", "spawnZapAppleTreesInBiomes", biomeIdArray ).getIntList() )
-				spawnZapAppleTreesInBiomes.add( i );
-			
 			disableZapAppleTreesInDimensions = Lists.newArrayList();
-			for ( int i : config.get( "general", "disableZapAppleTreesInDimensions", new int[] { -1, 1 } ).getIntList() )
+			for ( int i : config.get( "general", "disableZapAppleTreesInDimensions", new int[] { -1, 1 }, "Zap Apple Tree generation will be disabled in these dimensions" ).getIntList() )
 				disableZapAppleTreesInDimensions.add( i );
+			
+			disableZapAppleTreesInBiomes = Lists.newArrayList();
+			for ( int i : config.get( "general", "disableZapAppleTreesInBiomes", new int[] { 0, 2, 8, 9, 10, 11, 12, 13, 17, 24, 35, 36, 37, 38, 39 }, "Zap Apple Tree generation will be disabled in these biomes. See http://minecraft.gamepedia.com/Biome for vanilla biome ids." ).getIntList() )
+				disableZapAppleTreesInBiomes.add( i );
 		}
 		catch ( Exception e )
 		{
@@ -152,6 +152,8 @@ public class ZapApples
 		zapPlanks = new BlockZapApplePlanks();
 		blockZapWoodDoor = new BlockZapAppleWoodDoor();
 		itemZapWoodDoor = new ItemZapAppleWoodDoor();
+		blockStoneDoor = new BlockStoneDoor();
+		itemStoneDoor = new ItemStoneDoor();
 		pie = new BlockPie();
 		cake = new BlockCake();
 		flour = new BlockFlour();
@@ -198,12 +200,14 @@ public class ZapApples
 		GameRegistry.registerBlock( zapApple, ItemZapApple.class, "zapApple" );
 		GameRegistry.registerBlock( jar, ItemJar.class, "jar" );
 		GameRegistry.registerBlock( zapPlanks, "zapApplePlanks" );
-		GameRegistry.registerBlock( blockZapWoodDoor, "zapAppleWoodDoor" );
 		GameRegistry.registerBlock( flour, "flour" );
 		GameRegistry.registerBlock( cake, ItemCake.class, "cake" );
 		GameRegistry.registerBlock( pie, ItemPie.class, "pie" );
+		GameRegistry.registerBlock( blockZapWoodDoor, "zapAppleWoodDoor" );
+		GameRegistry.registerBlock( blockStoneDoor, "stoneDoor" );
 		
 		GameRegistry.registerItem( itemZapWoodDoor, "zapAppleWoodDoorItem" );
+		GameRegistry.registerItem( itemStoneDoor, "stoneDoorItem" );
 		GameRegistry.registerItem( zapAppleMushed, "zapAppleMushed" );
 		GameRegistry.registerItem( jamFood, "jamFood" );
 		GameRegistry.registerItem( jamBucket, "jamBucket" );
@@ -234,9 +238,6 @@ public class ZapApples
 			cake.registerFrostOption( "" + i, icings[i], new ItemStack( icing, 1, i ) );
 		}
 		
-		// OreDictionary.registerOre( "logWood", zapAppleLog );
-		// OreDictionary.registerOre( "plankWood", zapPlanks );
-		
 		OreDictionary.registerOre( "logWood", zapAppleDeadLog );
 		OreDictionary.registerOre( "leavesTree", zapAppleLeaves );
 		OreDictionary.registerOre( "saplingTree", zapAppleSapling );
@@ -246,12 +247,14 @@ public class ZapApples
 		GameRegistry.addRecipe( new ItemStack( jar ), new Object[] { " I ", "G G", " G ", Character.valueOf( 'I' ), Items.iron_ingot, Character.valueOf( 'G' ), Blocks.glass_pane } );
 		GameRegistry.addShapelessRecipe( new ItemStack( jamBucket, 1 ), new Object[] { Items.bucket, zapApple } );
 		GameRegistry.addShapelessRecipe( new ItemStack( zapPlanks, 4 ), new Object[] { new ItemStack( zapAppleLog ) } );
-		GameRegistry.addShapelessRecipe( new ItemStack( zapPlanks, 4 ), new Object[] { new ItemStack( zapAppleDeadLog ) } );
+		GameRegistry.addShapelessRecipe( new ItemStack( Blocks.planks, 4, 0 ), new Object[] { new ItemStack( zapAppleDeadLog ) } );
+		
 		GameRegistry.addShapelessRecipe( new ItemStack( Items.dye, 1, 5 ), new Object[] { new ItemStack( zapPlanks ) } );
 		
 		GameRegistry.addShapelessRecipe( new ItemStack( jamFood, 3, 0 ), new Object[] { new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( jamBucket, 1, 1 ) } );
 		
-		GameRegistry.addRecipe( new ItemStack( blockZapWoodDoor, 1 ), new Object[] { "WW ", "WW ", "WW ", Character.valueOf( 'W' ), itemZapWoodDoor } );
+		GameRegistry.addRecipe( new ItemStack( itemZapWoodDoor, 1 ), new Object[] { "WW ", "WW ", "WW ", Character.valueOf( 'W' ), zapPlanks } );
+		GameRegistry.addRecipe( new ItemStack( itemStoneDoor, 1 ), new Object[] { "SS ", "SS ", "SS ", Character.valueOf( 'S' ), Blocks.stone } );
 		
 		GameRegistry.addRecipe( new ItemStack( cake, 1 ), new Object[] { " M ", "WWW", Character.valueOf( 'M' ), Items.milk_bucket, Character.valueOf( 'W' ), Items.wheat } );
 		GameRegistry.addRecipe( new ItemStack( icing, 1, 15 ), new Object[] { "   ", "SMS", "   ", Character.valueOf( 'S' ), Items.sugar, Character.valueOf( 'M' ), Items.milk_bucket } );

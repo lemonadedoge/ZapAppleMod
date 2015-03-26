@@ -39,8 +39,8 @@ public class BlockDoughFluid extends BlockFluidClassic
 	@SideOnly( Side.CLIENT )
 	public void registerBlockIcons( IIconRegister register )
 	{
-		stillIcon = register.registerIcon( "zapapples:doughstill" );
-		flowingIcon = register.registerIcon( "zapapples:doughflowing" );
+		stillIcon = register.registerIcon( "zapapples:dough_still" );
+		flowingIcon = register.registerIcon( "zapapples:dough_flow" );
 		
 		ZapApples.doughFluid.setIcons( stillIcon, flowingIcon );
 	}

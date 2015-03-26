@@ -25,6 +25,12 @@ public class ItemJar extends ItemBlock
 		return meta;
 	}
 	
+	@Override
+	public boolean isFull3D()
+	{
+		return true;
+	}
+	
 	public void addInformation( ItemStack itemstack, EntityPlayer player, List list, boolean par )
 	{
 		NBTTagCompound tag = itemstack.getTagCompound();
