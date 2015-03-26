@@ -1,0 +1,9 @@
+language: java
+jdk: oraclejdk7
+install:
+- gradle clean setupDecompWorkspace
+script:
+- gradle build
+env:
+  global:
+  - TERM=dumb
