@@ -1,12 +1,14 @@
 package com.chiorichan.ZapApples;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.chiorichan.ZapApples.entity.EntityMeteor;
+import com.chiorichan.ZapApples.entity.EntityZapApple;
 import com.chiorichan.ZapApples.events.GeneralEventHandler;
 import com.chiorichan.ZapApples.events.SoundHandler;
 import com.chiorichan.ZapApples.mobs.EntityTimberWolf;
@@ -33,16 +35,17 @@ public class ClientProxy extends CommonProxy
 	{
 		super.registerRenderers();
 		
+		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.cake ).getItem(), new RenderCakeItem() );
+		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.jar ).getItem(), new RenderJarItem() );
+		
+		RenderingRegistry.registerEntityRenderingHandler( EntityZapApple.class, new RenderSnowball( new ItemStack( ZapApples.zapApple ).getItem() ) );
 		RenderingRegistry.registerEntityRenderingHandler( EntityTimberWolf.class, new RenderTimberWolf( new ModelTimberWolf(), 0.5F ) );
+		RenderingRegistry.registerEntityRenderingHandler( EntityMeteor.class, new RenderMeteor() );
 		
 		MinecraftForge.EVENT_BUS.register( new GeneralEventHandler() );
 		MinecraftForge.EVENT_BUS.register( new SoundHandler() );
 		
 		ClientRegistry.bindTileEntitySpecialRenderer( TileEntityPie.class, new RenderPie() );
-		RenderingRegistry.registerEntityRenderingHandler( EntityMeteor.class, new RenderMeteor() );
-		
-		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.cake ).getItem(), new RenderCakeItem() );
-		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.jar ).getItem(), new RenderJarItem() );
 		
 		new Render2D();
 		new Render3D();

@@ -19,7 +19,7 @@ public class TreeGenerator implements IWorldGenerator
 			BiomeGenBase b = world.getBiomeGenForCoords( chunkX * 16, chunkZ * 16 );
 			if ( b != null && !ZapApples.disableZapAppleTreesInBiomes.contains( b.biomeID ) )
 			{
-				if ( rand.nextInt( 70 ) == 1 )
+				if ( rand.nextInt( ZapApples.treeSpawnRate ) == 1 )
 				{
 					for ( int x = chunkX * 16; x < chunkX * 16 + 16; x++ )
 					{

@@ -33,6 +33,9 @@ import com.chiorichan.ZapApples.blocks.BlockZapAppleLog;
 import com.chiorichan.ZapApples.blocks.BlockZapApplePlanks;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleSapling;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleWoodDoor;
+import com.chiorichan.ZapApples.entity.EntityMeteor;
+import com.chiorichan.ZapApples.entity.EntityMeteorHeadFX;
+import com.chiorichan.ZapApples.entity.EntityZapApple;
 import com.chiorichan.ZapApples.items.ItemCake;
 import com.chiorichan.ZapApples.items.ItemFluidBucket;
 import com.chiorichan.ZapApples.items.ItemIcing;
@@ -80,6 +83,7 @@ public class ZapApples
 	public static boolean lightningEffect;
 	public static boolean spawnTimberWolves;
 	public static boolean playHowlSound;
+	public static int treeSpawnRate;
 	public static List<Integer> disableZapAppleTreesInDimensions;
 	public static List<Integer> disableZapAppleTreesInBiomes;
 	
@@ -154,6 +158,8 @@ public class ZapApples
 				disableZapAppleTreesInBiomes.add( i );
 			
 			playHowlSound = config.getBoolean( "playHowlSound", "general", true, "Toogles the Timber Wolf howl when Zap Apples begin to grow." );
+			
+			treeSpawnRate = config.getInt( "treeSpawnRate", "general", 70, 20, 10000, "Configures the spawn rate of Zap Apple Trees. 70 = Defailt, 20 = Overload (Unrecommended), 10000 = ALMOST NON-EXISTENT!" );
 		}
 		catch ( Exception e )
 		{
@@ -183,12 +189,18 @@ public class ZapApples
 		
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		
-		EntityRegistry.registerModEntity( EntityTimberWolf.class, "timberwolf", id, this, 80, 3, true );
+		EntityRegistry.registerModEntity( EntityTimberWolf.class, "timberwolf", id++, this, 80, 3, true );
 		
 		if ( spawnTimberWolves )
 			for ( int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++ )
 				if ( BiomeGenBase.getBiomeGenArray()[i] != null )
 					EntityRegistry.addSpawn( EntityTimberWolf.class, 6, 1, 3, EnumCreatureType.monster, BiomeGenBase.getBiomeGenArray()[i] );
+		
+		EntityRegistry.registerModEntity( EntityZapApple.class, "ZapApple", id++, this, 80, 3, true );
+		
+		EntityRegistry.registerModEntity( EntityMeteor.class, "Meteor", id++, this, 80, 3, true );
+		
+		EntityRegistry.registerModEntity( EntityMeteorHeadFX.class, "MeteorHead", id++, this, 80, 3, true );
 		
 		doughFluid = new Fluid( "dough" );
 		doughFluid.setLuminosity( 1 );
@@ -274,13 +286,17 @@ public class ZapApples
 		
 		GameRegistry.addShapelessRecipe( new ItemStack( Items.dye, 1, 5 ), new Object[] {new ItemStack( zapPlanks )} );
 		
-		GameRegistry.addShapelessRecipe( new ItemStack( jamFood, 3, 0 ), new Object[] {new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( jamBucket, 1, 1 )} );
+		GameRegistry.addShapelessRecipe( new ItemStack( jamFood, 3, 0 ), new Object[] {new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( zapAppleMushed, 1 )} );
+		
+		GameRegistry.addShapelessRecipe( new ItemStack( icing, 1, 15 ), new Object[] {new ItemStack( Items.milk_bucket ), new ItemStack( Items.sugar ), new ItemStack( Items.sugar )} );
+		
+		GameRegistry.addShapelessRecipe( new ItemStack( cake, 1 ), new Object[] {new ItemStack( Items.milk_bucket ), new ItemStack( Items.egg ), new ItemStack( Items.sugar ), new ItemStack( flour )} );
 		
 		GameRegistry.addRecipe( new ItemStack( itemZapWoodDoor, 1 ), new Object[] {"WW ", "WW ", "WW ", Character.valueOf( 'W' ), zapPlanks} );
 		GameRegistry.addRecipe( new ItemStack( itemStoneDoor, 1 ), new Object[] {"SS ", "SS ", "SS ", Character.valueOf( 'S' ), Blocks.stone} );
 		
-		GameRegistry.addRecipe( new ItemStack( cake, 1 ), new Object[] {" M ", "WWW", Character.valueOf( 'M' ), Items.milk_bucket, Character.valueOf( 'W' ), Items.wheat} );
-		GameRegistry.addRecipe( new ItemStack( icing, 1, 15 ), new Object[] {"   ", "SMS", "   ", Character.valueOf( 'S' ), Items.sugar, Character.valueOf( 'M' ), Items.milk_bucket} );
+		// GameRegistry.addRecipe( new ItemStack( cake, 1 ), new Object[] {" M ", "WWW", Character.valueOf( 'M' ), Items.milk_bucket, Character.valueOf( 'W' ), flour} );
+		// GameRegistry.addRecipe( new ItemStack( icing, 1, 15 ), new Object[] {"   ", "SMS", "   ", Character.valueOf( 'S' ), Items.sugar, Character.valueOf( 'M' ), Items.milk_bucket} );
 		
 		for ( int i = 0; i < 16; i++ )
 		{

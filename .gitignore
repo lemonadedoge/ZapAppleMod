@@ -12,3 +12,5 @@ config/
 /server.properties
 /crash-reports
 /usernamecache.json
+/asm
+/mods

@@ -74,6 +74,12 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 		topIcon = register.registerIcon( "zapapples:zapapple_log_top" );
 	}
 	
+	public void onBlockClicked( World worldObj, int x, int y, int z, EntityPlayer player )
+	{
+		if ( !worldObj.isRemote && player.isWet() )
+			worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, player.posX, player.posY, player.posZ ) );
+	}
+	
 	@Override
 	public void onBlockPlacedBy( World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack )
 	{
@@ -133,7 +139,7 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 		// Hmm? How is this different from PreDestroy?
 		TileEntity _tile = world.getTileEntity( x, y, z );
 		
-		FMLLog.info( "Block at " + x + "," + y + "," + z + " was removed! " + _tile );
+		FMLLog.info( "Zap Apple Tree TileEntity at " + x + "," + y + "," + z + " was removed!" );
 		
 		if ( _tile != null && _tile instanceof TileEntityZapAppleLog )
 		{
@@ -145,9 +151,6 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 	@Override
 	public boolean onBlockActivated( World worldObj, int x, int y, int z, EntityPlayer entity, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_ )
 	{
-		if ( !worldObj.isRemote && entity.isWet() )
-			worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, entity.posX, entity.posY, entity.posZ ) );
-		
 		if ( !worldObj.isRemote && entity.capabilities.isCreativeMode )
 		{
 			TileEntity tile0 = worldObj.getTileEntity( x, y, z );
