@@ -23,12 +23,16 @@ import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cpw.mods.fml.common.FMLLog;
+
 public class TileEntityZapAppleLog extends TileEntity implements DayChangeListener
 {
 	private Random rand;
-	private int index;
-	private int delay;
+	public int index[] = new int[6];
+	public int indexMax[] = new int[6];
 	public boolean[] finished;
+	private static int[] delaysDefault = new int[] {12, 12, 8, 8, 8, 4};
+	private int[] delays;
 	private List<OrderedTriple> leafCopy;
 	private List<OrderedTriple> appleCopy;
 	public List<OrderedTriple> leafPositions;
@@ -48,7 +52,7 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 		logPositions = Lists.newLinkedList();
 		applePositions = Maps.newHashMap();
 		finished = new boolean[6];
-		delay = 5;
+		delays = delaysDefault.clone();
 		rand = new Random();
 		day = 0;
 	}
@@ -65,174 +69,310 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 		return true;
 	}
 	
+	/**
+	 * Returns the description for each phase
+	 * 
+	 * Phase 0 = Sound Effects
+	 * Phase 1 = Leaves Begin to Grow
+	 * Phase 2 = Flowers Appear
+	 * Phase 3 = Gray Apples Replace Flowers
+	 * Phase 4 = Apples Mature
+	 * Phase 5 = Apples and Leaves decay.
+	 */
+	public static String phaseDesc( int phase )
+	{
+		switch ( phase )
+		{
+			case 0:
+				return "Timber Wolves Howl";
+			case 1:
+				return "Leaves Grow";
+			case 2:
+				return "Flowers Grow";
+			case 3:
+				return "Gray Apples Grow";
+			case 4:
+				return "Zap Apples Mature";
+			case 5:
+				return "Apples and Leaves Decay";
+			default:
+				return "<Invalid Phase>";
+		}
+	}
+	
+	public boolean phase( int phase )
+	{
+		switch ( phase )
+		{
+			case 0:
+				return day == 0;
+			case 1:
+				return ( day >= 1 && day < 5 && !finished[1] );
+			case 2:
+				return ( day >= 2 && day < 5 && !finished[2] );
+			case 3:
+				return ( day >= 3 && day < 5 && !finished[3] );
+			case 4:
+				return ( day >= 4 && day < 5 && !finished[4] );
+			case 5:
+				return ( day >= 5 && !finished[5] );
+			default:
+				return false;
+		}
+	}
+	
+	/**
+	 * Does a delay check for each phase
+	 * We cut a delay in half on fastSpeed days for REASONS!
+	 */
+	private boolean delay( int i, boolean fastSpeed )
+	{
+		if ( delays[i]-- < 0 )
+		{
+			delays[i] = fastSpeed ? delaysDefault[i] / 2 : delaysDefault[i];
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void updateEntity()
 	{
-		if ( --delay <= 0 && !worldObj.isRemote )
+		try
 		{
-			delay = 10;
+			if ( worldObj.isRemote )
+				return;
 			
-			if ( day == 0 )
+			/**
+			 * Play the Timber Wolf howl at random chance of 1 out of a 1000.
+			 * worldObj.playSoundEffect( xCoord, yCoord, zCoord, "zapapples:zapapple_wolf_zaphowl", 1.0F, 1.0F );
+			 */
+			if ( phase( 0 ) && delay( 0, false ) && ZapApples.playHowlSound && rand.nextInt( 1000 ) == 0 )
+				worldObj.playSound( xCoord, yCoord, zCoord, "zapapples:zaphowl", 1.0F, 1.0F, false );
+			
+			/**
+			 * The day is between 2 and 5
+			 * If it's day 3+, then we go faster
+			 * We also don't want to try and complete phases 1-4 after phase 5, by phase 5 everything needs to reset.
+			 */
+			if ( phase( 1 ) && delay( 1, day > 1 ) )
+				dayTwoTick();
+			
+			if ( phase( 2 ) && delay( 2, day > 2 ) )
+				dayThreeTick();
+			
+			if ( phase( 3 ) && delay( 3, day > 3 ) )
+				dayFourTick();
+			
+			if ( phase( 4 ) && delay( 4, day > 4 ) )
+				dayFiveTick();
+			
+			if ( phase( 5 ) && delay( 5, day > 5 ) )
+				daySixTick();
+			
+			// We repeat the cycle every 25 days
+			if ( day > 25 )
+				resetValues();
+			
+			for ( int i = 0; i < 6; i++ )
+				delays[i]--; // Tick Delays Down
+		}
+		catch ( Throwable t )
+		{
+			t.printStackTrace();
+			FMLLog.bigWarning( "Exception Thrown in the Zap Apple Tick Cycle. Please kindly report this stacktrace on the author's GitHub at https://github.com/ChioriGreene/ZapAppleMod/issues The tick cycle has been reset but is not a permanent fix." );
+			resetValues();
+		}
+	}
+	
+	private void dayTwoTick()
+	{
+		// Generate Leaf Positions
+		if ( leafCopy == null )
+		{
+			leafCopy = new ArrayList<OrderedTriple>( leafPositions );
+			index[1] = 0;
+			indexMax[1] = leafCopy.size();
+		}
+		
+		if ( index[1] >= indexMax[1] )
+		{
+			index[1] = 0;
+			leafCopy = null;
+			finished[1] = true;
+		}
+		else
+		{
+			OrderedTriple pos = ( OrderedTriple ) leafCopy.get( index[1]++ );
+			if ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) )
 			{
-				finished[0] = false;
-				finished[1] = false;
-				finished[2] = false;
-				finished[3] = false;
-				finished[4] = false;
-				finished[5] = false;
+				if ( ( ZapApples.lightningEffect ) && ( rand.nextInt( 40 ) == 1 ) )
+				{
+					int x = xCoord + rand.nextInt( 21 ) - 9;
+					int y = yCoord;
+					int z = zCoord + rand.nextInt( 21 ) - 9;
+					worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
+				}
+				worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleLeaves );
 			}
-			else if ( ( day == 1 ) && ( finished[0] == false ) )
+		}
+	}
+	
+	private void dayThreeTick()
+	{
+		if ( appleCopy == null )
+		{
+			appleCopy = new ArrayList<OrderedTriple>( applePositions.keySet() );
+			index[2] = 0;
+			indexMax[2] = appleCopy.size();
+			
+			if ( ZapApples.lightningEffect )
 			{
-				worldObj.playSoundEffect( xCoord, yCoord, zCoord, "mob.wolf.zaphowl", 1.0F, 1.0F );
-				finished[0] = true;
+				int x = xCoord + rand.nextInt( 21 ) - 9;
+				int y = yCoord;
+				int z = zCoord + rand.nextInt( 21 ) - 9;
+				worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
 			}
-			else if ( ( day == 2 ) && ( finished[1] == false ) )
+		}
+		
+		if ( index[2] >= indexMax[2] )
+		{
+			index[2] = 0;
+			
+			if ( !phase( 1 ) )
 			{
-				if ( leafCopy == null )
-				{
-					index = 0;
-					leafCopy = new ArrayList<OrderedTriple>( leafPositions );
-					if ( ZapApples.lightningEffect )
-					{
-						int x = xCoord + rand.nextInt( 21 ) - 9;
-						int y = yCoord;
-						int z = zCoord + rand.nextInt( 21 ) - 9;
-						worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
-					}
-				}
-				if ( index >= leafCopy.size() )
-				{
-					index = 0;
-					leafCopy = null;
-					finished[1] = true;
-				}
-				else
-				{
-					OrderedTriple pos = ( OrderedTriple ) leafCopy.get( index++ );
-					if ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) )
-					{
-						if ( ( ZapApples.lightningEffect ) && ( rand.nextInt( 30 ) == 1 ) )
-						{
-							int x = xCoord + rand.nextInt( 21 ) - 9;
-							int y = yCoord;
-							int z = zCoord + rand.nextInt( 21 ) - 9;
-							worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
-						}
-						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleLeaves );
-					}
-				}
+				// We can't place flowers until leaves are fully done
+				appleCopy = null;
+				finished[2] = true;
 			}
-			else if ( ( day == 3 ) && ( finished[2] == false ) )
+		}
+		else
+		{
+			OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index[2]++ );
+			if ( ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) ) && ( ZapApples.zapAppleFlowers.canPlaceBlockOnSide( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue() ) ) )
 			{
-				if ( appleCopy == null )
-				{
-					index = 0;
-					appleCopy = new ArrayList<OrderedTriple>( applePositions.keySet() );
-				}
-				if ( index >= appleCopy.size() )
-				{
-					index = 0;
-					appleCopy = null;
-					finished[2] = true;
-				}
-				else
-				{
-					OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index++ );
-					if ( ( ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.air ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.snow ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.leaves ) || ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == Blocks.vine ) ) && ( ZapApples.zapAppleFlowers.canPlaceBlockOnSide( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue() ) ) )
-					{
-						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers );
-						ZapApples.zapAppleFlowers.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
-					}
-				}
+				worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers );
+				ZapApples.zapAppleFlowers.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 			}
-			else if ( ( day == 4 ) && ( finished[3] == false ) )
+		}
+	}
+	
+	private void dayFourTick()
+	{
+		if ( appleCopy == null )
+		{
+			appleCopy = new ArrayList<OrderedTriple>( applePositions.keySet() );
+			index[3] = 0;
+			indexMax[3] = appleCopy.size();
+		}
+		
+		if ( index[3] >= indexMax[3] )
+		{
+			index[3] = 0;
+			
+			if ( !phase( 1 ) )
 			{
-				if ( appleCopy == null )
-				{
-					index = 0;
-					appleCopy = new ArrayList<OrderedTriple>( applePositions.keySet() );
-				}
-				if ( index >= appleCopy.size() )
-				{
-					index = 0;
-					appleCopy = null;
-					finished[3] = true;
-				}
-				else
-				{
-					OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index++ );
-					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleFlowers )
-					{
-						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple );
-						PacketHandler.sendToDimension( new SendEffectsPacket( 0, pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers, 0 ), worldObj.provider.dimensionId );
-						ZapApples.grayApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
-					}
-				}
+				// We can't place flowers until leaves are fully done
+				appleCopy = null;
+				finished[3] = true;
 			}
-			else if ( ( day == 5 ) && ( finished[4] == false ) )
+		}
+		else
+		{
+			OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index[3]++ );
+			if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleFlowers )
 			{
-				if ( appleCopy == null )
-				{
-					index = 0;
-					appleCopy = new ArrayList<OrderedTriple>( applePositions.keySet() );
-					if ( ZapApples.lightningEffect )
-					{
-						int x = xCoord + rand.nextInt( 21 ) - 9;
-						int y = yCoord;
-						int z = zCoord + rand.nextInt( 21 ) - 9;
-						worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
-					}
-				}
-				if ( index >= appleCopy.size() )
-				{
-					index = 0;
-					appleCopy = null;
-					finished[4] = true;
-				}
-				else
-				{
-					OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index++ );
-					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.grayApple )
-					{
-						worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapApple, 0, 2 );
-						PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple, 0 ), worldObj.provider.dimensionId );
-						ZapApples.zapApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
-						if ( rand.nextBoolean() )
-						{
-							int x = xCoord + rand.nextInt( 21 ) - 9;
-							int y = yCoord;
-							int z = zCoord + rand.nextInt( 21 ) - 9;
-							worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
-						}
-					}
-				}
+				worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple );
+				PacketHandler.sendToDimension( new SendEffectsPacket( 0, pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapAppleFlowers, 0 ), worldObj.provider.dimensionId );
+				ZapApples.grayApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
 			}
-			else if ( ( day == 6 ) && ( finished[5] == false ) )
+		}
+	}
+	
+	private void dayFiveTick()
+	{
+		if ( appleCopy == null )
+		{
+			appleCopy = new ArrayList<OrderedTriple>( applePositions.keySet() );
+			index[4] = 0;
+			indexMax[4] = appleCopy.size();
+			
+			if ( ZapApples.lightningEffect )
 			{
-				if ( leafCopy == null )
+				int x = xCoord + rand.nextInt( 21 ) - 9;
+				int y = yCoord;
+				int z = zCoord + rand.nextInt( 21 ) - 9;
+				worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
+			}
+		}
+		
+		if ( index[4] >= indexMax[4] )
+		{
+			index[4] = 0;
+			
+			if ( !phase( 1 ) )
+			{
+				// We can't place flowers until leaves are fully done
+				appleCopy = null;
+				finished[4] = true;
+			}
+		}
+		else
+		{
+			OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index[4]++ );
+			if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.grayApple )
+			{
+				if ( ( ZapApples.lightningEffect ) && ( rand.nextInt( 40 ) == 1 ) )
 				{
-					index = 0;
-					leafCopy = new ArrayList<OrderedTriple>( leafPositions );
-					
-					ZapApples.zapApple.isHarvestDay = false;
+					int x = xCoord + rand.nextInt( 21 ) - 9;
+					int y = yCoord;
+					int z = zCoord + rand.nextInt( 21 ) - 9;
+					worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, x, y, z ) );
 				}
-				if ( index >= leafCopy.size() )
+				worldObj.setBlock( pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapApple, 0, 2 );
+				PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.grayApple, 0 ), worldObj.provider.dimensionId );
+				ZapApples.zapApple.updateBlockMetadata( worldObj, pos.getX(), pos.getY(), pos.getZ(), ( ( Integer ) applePositions.get( pos ) ).intValue(), 0.0F, 0.0F, 0.0F );
+			}
+		}
+	}
+	
+	private void daySixTick()
+	{
+		if ( leafCopy == null || appleCopy == null )
+		{
+			leafCopy = new ArrayList<OrderedTriple>( leafPositions );
+			appleCopy = new ArrayList<OrderedTriple>( applePositions.keySet() );
+			index[5] = 0;
+			indexMax[5] = appleCopy.size() + leafCopy.size();
+		}
+		
+		if ( index[5] >= indexMax[5] )
+		{
+			index[5] = 0;
+			leafCopy = null;
+			appleCopy = null;
+			finished[5] = true;
+		}
+		else
+		{
+			if ( index[5] < appleCopy.size() )
+			{
+				OrderedTriple pos = ( OrderedTriple ) appleCopy.get( index[5] );
+				if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapApple || worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.grayApple )
 				{
-					index = 0;
-					leafCopy = null;
-					finished[5] = true;
-				}
-				else
-				{
-					OrderedTriple pos = ( OrderedTriple ) leafCopy.get( index++ );
-					if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleLeaves )
-					{
-						ZapApples.zapAppleLeaves.removeLeaves( worldObj, pos.getX(), pos.getY(), pos.getZ() );
-					}
+					PacketHandler.getDispatcher().sendToDimension( new SendEffectsPacket( 1, pos.getX(), pos.getY(), pos.getZ(), ZapApples.zapApple, 0 ), worldObj.provider.dimensionId );
+					worldObj.setBlockToAir( pos.getX(), pos.getY(), pos.getZ() );
 				}
 			}
 			
-			ZapApples.zapApple.isHarvestDay = ( day == 5 );
+			if ( index[5] >= appleCopy.size() )
+			{
+				OrderedTriple pos = ( OrderedTriple ) leafCopy.get( index[5] - appleCopy.size() );
+				if ( worldObj.getBlock( pos.getX(), pos.getY(), pos.getZ() ) == ZapApples.zapAppleLeaves )
+					ZapApples.zapAppleLeaves.removeLeaves( worldObj, pos.getX(), pos.getY(), pos.getZ() );
+			}
+			
+			index[5]++;
 		}
 	}
 	
@@ -241,15 +381,13 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 		super.readFromNBT( tag );
 		
 		resetValues();
-		index = tag.getInteger( "index" );
 		day = tag.getInteger( "day" );
 		
-		finished[0] = tag.getBoolean( "finished[0]" );
-		finished[1] = tag.getBoolean( "finished[1]" );
-		finished[2] = tag.getBoolean( "finished[2]" );
-		finished[3] = tag.getBoolean( "finished[3]" );
-		finished[4] = tag.getBoolean( "finished[4]" );
-		finished[5] = tag.getBoolean( "finished[5]" );
+		for ( int i = 0; i < 6; i++ )
+			index[i] = tag.getInteger( "finished[" + index + "]" );
+		
+		for ( int i = 0; i < 6; i++ )
+			finished[i] = tag.getBoolean( "finished[" + i + "]" );
 		
 		NBTTagCompound leaves = tag.getCompoundTag( "leaves" );
 		int leafSize = leaves.getInteger( "size" );
@@ -277,15 +415,13 @@ public class TileEntityZapAppleLog extends TileEntity implements DayChangeListen
 	{
 		super.writeToNBT( tag );
 		
-		tag.setInteger( "index", index );
 		tag.setInteger( "day", day );
 		
-		tag.setBoolean( "finished[0]", finished[0] );
-		tag.setBoolean( "finished[1]", finished[1] );
-		tag.setBoolean( "finished[2]", finished[2] );
-		tag.setBoolean( "finished[3]", finished[3] );
-		tag.setBoolean( "finished[4]", finished[4] );
-		tag.setBoolean( "finished[5]", finished[5] );
+		for ( int i = 0; i < 6; i++ )
+			tag.setInteger( "finished[" + index + "]", index[i] );
+		
+		for ( int i = 0; i < 6; i++ )
+			tag.setBoolean( "finished[" + i + "]", finished[i] );
 		
 		NBTTagCompound leaves = new NBTTagCompound();
 		leaves.setInteger( "size", leafPositions.size() );
