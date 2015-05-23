@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,6 +29,7 @@ import com.chiorichan.ZapApples.util.InventoryUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@SuppressWarnings( {"unchecked", "rawtypes"} )
 public class BlockJar extends BlockContainer
 {
 	public ItemStack cachedItemStack;
@@ -93,7 +93,7 @@ public class BlockJar extends BlockContainer
 				liquid = new FluidStack( ZapApples.zapAppleJam, 1000 );
 			}
 			
-			TileEntityJar tank = (TileEntityJar) world.getTileEntity( i, j, k );
+			TileEntityJar tank = ( TileEntityJar ) world.getTileEntity( i, j, k );
 			
 			if ( liquid != null )
 			{
@@ -168,7 +168,7 @@ public class BlockJar extends BlockContainer
 		
 		if ( ( tile instanceof TileEntityJar ) )
 		{
-			TileEntityJar tank = (TileEntityJar) tile;
+			TileEntityJar tank = ( TileEntityJar ) tile;
 			return tank.getFluidLightLevel();
 		}
 		
@@ -184,7 +184,7 @@ public class BlockJar extends BlockContainer
 	@Override
 	public void onBlockPlacedBy( World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack )
 	{
-		TileEntityJar tile = (TileEntityJar) world.getTileEntity( x, y, z );
+		TileEntityJar tile = ( TileEntityJar ) world.getTileEntity( x, y, z );
 		
 		if ( ( tile != null ) && ( stack.getTagCompound() != null ) )
 		{
@@ -196,7 +196,7 @@ public class BlockJar extends BlockContainer
 	public ItemStack getPickBlock( MovingObjectPosition target, World world, int x, int y, int z )
 	{
 		ItemStack result = new ItemStack( this );
-		TileEntityJar tile = (TileEntityJar) world.getTileEntity( x, y, z );
+		TileEntityJar tile = ( TileEntityJar ) world.getTileEntity( x, y, z );
 		if ( tile != null )
 		{
 			result.setTagCompound( tile.getTank().writeToNBT( new NBTTagCompound() ) );
@@ -212,7 +212,7 @@ public class BlockJar extends BlockContainer
 		if ( !player.capabilities.isCreativeMode )
 		{
 			ItemStack result = new ItemStack( this );
-			TileEntityJar tile = (TileEntityJar) world.getTileEntity( x, y, z );
+			TileEntityJar tile = ( TileEntityJar ) world.getTileEntity( x, y, z );
 			if ( tile != null )
 			{
 				result.setTagCompound( tile.getTank().writeToNBT( new NBTTagCompound() ) );

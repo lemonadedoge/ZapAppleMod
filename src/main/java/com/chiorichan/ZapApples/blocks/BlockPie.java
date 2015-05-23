@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 
 import com.chiorichan.ZapApples.tileentity.TileEntityPie;
 
+@SuppressWarnings( {"unchecked", "rawtypes"} )
 public class BlockPie extends BlockContainer
 {
 	public BlockPie()
@@ -65,7 +66,7 @@ public class BlockPie extends BlockContainer
 	{
 		if ( player.canEat( false ) )
 		{
-			TileEntityPie tile = (TileEntityPie) world.getTileEntity( x, y, z );
+			TileEntityPie tile = ( TileEntityPie ) world.getTileEntity( x, y, z );
 			if ( tile != null )
 			{
 				tile.eatSlice( player );

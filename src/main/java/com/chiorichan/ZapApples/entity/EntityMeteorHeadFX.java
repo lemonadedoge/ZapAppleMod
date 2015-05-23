@@ -7,12 +7,12 @@ import net.minecraft.world.World;
 
 public class EntityMeteorHeadFX extends EntityFX
 {
-	private Entity theEntity;
+	// private Entity theEntity;
 	
-	public EntityMeteorHeadFX(World world, Entity entity)
+	public EntityMeteorHeadFX( World world, Entity entity )
 	{
 		super( world, entity.posX, entity.posY, entity.posZ, entity.motionX, entity.motionY, entity.motionZ );
-		theEntity = entity;
+		// theEntity = entity;
 		motionX = entity.motionX;
 		motionY = entity.motionY;
 		motionZ = entity.motionZ;

@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.StringUtils;
 
+@SuppressWarnings( {"unchecked", "rawtypes"} )
 public class ItemJar extends ItemBlock
 {
 	public ItemJar(Block block)

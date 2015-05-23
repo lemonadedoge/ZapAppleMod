@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.EnumChatFormatting;
 
+@SuppressWarnings( {"unchecked", "rawtypes"} )
 public class ItemZapApple extends ItemZapAppleGray
 {
 	public ItemZapApple(Block block)
@@ -27,6 +28,6 @@ public class ItemZapApple extends ItemZapAppleGray
 	
 	public void addInformation( ItemStack itemstack, EntityPlayer player, List list, boolean par )
 	{
-		list.add( EnumChatFormatting.YELLOW + "Give 1 Minute Absorption and 5 Full Meat Pops!" );
+		list.add( EnumChatFormatting.YELLOW + "Gives 1 minute of absorption and 5 full meat pops!" );
 	}
 }

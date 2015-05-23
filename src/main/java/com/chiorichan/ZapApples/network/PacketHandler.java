@@ -9,13 +9,13 @@ import com.chiorichan.ZapApples.network.packet.client.AbstractClientMessageHandl
 import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacketHandler;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 
+@SuppressWarnings( "unused" )
 public class PacketHandler
 {
 	private static byte packetId = 0;

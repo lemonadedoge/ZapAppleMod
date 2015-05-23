@@ -25,10 +25,10 @@ import com.chiorichan.ZapApples.tileentity.TileEntityCake;
 import com.chiorichan.ZapApples.util.InventoryUtil;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@SuppressWarnings( {"unchecked", "rawtypes"} )
 public class BlockCake extends BlockContainer
 {
 	public ItemStack cachedItemStack;
@@ -80,7 +80,7 @@ public class BlockCake extends BlockContainer
 	@Override
 	public void setBlockBoundsBasedOnState( IBlockAccess world, int x, int y, int z )
 	{
-		TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
+		TileEntityCake tile = ( TileEntityCake ) world.getTileEntity( x, y, z );
 		if ( tile != null )
 		{
 			float slice = 0.0625F;
@@ -111,11 +111,11 @@ public class BlockCake extends BlockContainer
 			{
 				for ( Entry<String, CakeIngredientMap> ent : frostIngredients.entrySet() )
 				{
-					CakeIngredientMap val = (CakeIngredientMap) ent.getValue();
+					CakeIngredientMap val = ( CakeIngredientMap ) ent.getValue();
 					
 					if ( ( val.activator != null ) && ( current.getItem() == val.activator.getItem() ) && current.getItemDamage() == val.activator.getItemDamage() )
 					{
-						TileEntityCake cake = (TileEntityCake) world.getTileEntity( x, y, z );
+						TileEntityCake cake = ( TileEntityCake ) world.getTileEntity( x, y, z );
 						
 						if ( cake != null )
 						{
@@ -151,7 +151,7 @@ public class BlockCake extends BlockContainer
 	{
 		if ( player.canEat( false ) )
 		{
-			TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
+			TileEntityCake tile = ( TileEntityCake ) world.getTileEntity( x, y, z );
 			if ( tile != null )
 			{
 				tile.eatSlice( player );
@@ -219,20 +219,20 @@ public class BlockCake extends BlockContainer
 		
 		for ( Entry<String, CakeIngredientMap> ent : baseIngredients.entrySet() )
 		{
-			IIcon iconTop = register.registerIcon( "zapapples:cakes/base_top_" + (String) ent.getKey() );
-			IIcon iconSide = register.registerIcon( "zapapples:cakes/base_side_" + (String) ent.getKey() );
-			IIcon iconEaten = register.registerIcon( "zapapples:cakes/base_eaten_" + (String) ent.getKey() );
+			IIcon iconTop = register.registerIcon( "zapapples:cakes/base_top_" + ( String ) ent.getKey() );
+			IIcon iconSide = register.registerIcon( "zapapples:cakes/base_side_" + ( String ) ent.getKey() );
+			IIcon iconEaten = register.registerIcon( "zapapples:cakes/base_eaten_" + ( String ) ent.getKey() );
 			
-			( (CakeIngredientMap) ent.getValue() ).setIcons( null, iconTop, iconSide, iconEaten );
+			( ( CakeIngredientMap ) ent.getValue() ).setIcons( null, iconTop, iconSide, iconEaten );
 		}
 		
 		for ( Entry<String, CakeIngredientMap> ent : frostIngredients.entrySet() )
 		{
-			IIcon iconTop = register.registerIcon( "zapapples:cakes/topping_top_" + (String) ent.getKey() );
-			IIcon iconSide = register.registerIcon( "zapapples:cakes/topping_side_" + (String) ent.getKey() );
-			IIcon iconEaten = register.registerIcon( "zapapples:cakes/topping_eaten_" + (String) ent.getKey() );
+			IIcon iconTop = register.registerIcon( "zapapples:cakes/topping_top_" + ( String ) ent.getKey() );
+			IIcon iconSide = register.registerIcon( "zapapples:cakes/topping_side_" + ( String ) ent.getKey() );
+			IIcon iconEaten = register.registerIcon( "zapapples:cakes/topping_eaten_" + ( String ) ent.getKey() );
 			
-			( (CakeIngredientMap) ent.getValue() ).setIcons( iconTop, null, iconSide, iconEaten );
+			( ( CakeIngredientMap ) ent.getValue() ).setIcons( iconTop, null, iconSide, iconEaten );
 		}
 	}
 	
@@ -240,14 +240,14 @@ public class BlockCake extends BlockContainer
 	@SideOnly( Side.CLIENT )
 	public IIcon getIcon( int side, int meta )
 	{
-		return ( (CakeIngredientMap) baseIngredients.get( "plain" ) ).getIcon( side, true );
+		return ( ( CakeIngredientMap ) baseIngredients.get( "plain" ) ).getIcon( side, true );
 	}
 	
 	public CakeIngredientMap getBaseIngredient( String key )
 	{
 		if ( baseIngredients.containsKey( key ) )
 		{
-			return (CakeIngredientMap) baseIngredients.get( key );
+			return ( CakeIngredientMap ) baseIngredients.get( key );
 		}
 		return null;
 	}
@@ -256,7 +256,7 @@ public class BlockCake extends BlockContainer
 	{
 		if ( frostIngredients.containsKey( key ) )
 		{
-			return (CakeIngredientMap) frostIngredients.get( key );
+			return ( CakeIngredientMap ) frostIngredients.get( key );
 		}
 		return null;
 	}
@@ -264,7 +264,7 @@ public class BlockCake extends BlockContainer
 	@Override
 	public void onBlockPlacedBy( World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack )
 	{
-		TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
+		TileEntityCake tile = ( TileEntityCake ) world.getTileEntity( x, y, z );
 		
 		if ( ( tile != null ) && ( stack.getTagCompound() != null ) )
 		{
@@ -276,7 +276,7 @@ public class BlockCake extends BlockContainer
 	public ItemStack getPickBlock( MovingObjectPosition target, World world, int x, int y, int z )
 	{
 		ItemStack result = new ItemStack( this );
-		TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
+		TileEntityCake tile = ( TileEntityCake ) world.getTileEntity( x, y, z );
 		if ( tile != null )
 		{
 			result.setTagCompound( tile.getItemNBT() );
@@ -292,7 +292,7 @@ public class BlockCake extends BlockContainer
 		if ( !player.capabilities.isCreativeMode )
 		{
 			ItemStack result = new ItemStack( this );
-			TileEntityCake tile = (TileEntityCake) world.getTileEntity( x, y, z );
+			TileEntityCake tile = ( TileEntityCake ) world.getTileEntity( x, y, z );
 			if ( tile != null )
 			{
 				result.setTagCompound( tile.getItemNBT() );
@@ -330,7 +330,7 @@ public class BlockCake extends BlockContainer
 		public String title;
 		public ItemStack activator;
 		
-		public CakeIngredientMap(String _key, String _title, ItemStack _activator)
+		public CakeIngredientMap( String _key, String _title, ItemStack _activator )
 		{
 			key = _key;
 			title = _title;

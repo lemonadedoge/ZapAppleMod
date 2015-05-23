@@ -16,7 +16,7 @@ public class ItemJamFood extends ItemFood
 	public ItemJamFood()
 	{
 		super( 0, 0.0F, false );
-		setUnlocalizedName( "jamFood" );
+		setUnlocalizedName( "jamSandwich" );
 	}
 	
 	public ItemStack onEaten( ItemStack stack, World world, EntityPlayer player )

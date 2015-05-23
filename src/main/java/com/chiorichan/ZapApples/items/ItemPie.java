@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
+@SuppressWarnings( {"rawtypes"} )
 public class ItemPie extends ItemBlock
 {
 	public ItemPie(Block block)

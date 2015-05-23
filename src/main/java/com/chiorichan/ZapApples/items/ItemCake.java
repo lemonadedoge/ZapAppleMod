@@ -11,6 +11,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 import com.chiorichan.ZapApples.ZapApples;
 
+@SuppressWarnings( {"unchecked", "rawtypes"} )
 public class ItemCake extends ItemBlock
 {
 	public ItemCake(Block block)

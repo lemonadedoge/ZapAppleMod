@@ -2,6 +2,8 @@ package com.chiorichan.ZapApples.blocks;
 
 import java.util.Random;
 
+import com.chiorichan.ZapApples.ZapApples;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.IconFlipped;
@@ -399,7 +401,7 @@ public class BlockStoneDoor extends Block
 	
 	public Item getItemDropped( int p_149650_1_, Random p_149650_2_, int p_149650_3_ )
 	{
-		return ( p_149650_1_ & 8 ) != 0 ? null : ( this.blockMaterial == Material.iron ? Items.iron_door : Items.wooden_door );
+		return ( p_149650_1_ & 8 ) != 0 ? null : ZapApples.itemStoneDoor;
 	}
 	
 	/**

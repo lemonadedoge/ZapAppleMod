@@ -16,7 +16,6 @@ import com.chiorichan.ZapApples.ZapApples;
 import com.chiorichan.ZapApples.network.PacketHandler;
 import com.chiorichan.ZapApples.network.packet.client.SendEffectsPacket;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

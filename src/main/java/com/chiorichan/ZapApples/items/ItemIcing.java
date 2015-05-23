@@ -14,6 +14,7 @@ import com.chiorichan.ZapApples.ZapApples;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@SuppressWarnings( {"unchecked", "rawtypes"} )
 public class ItemIcing extends Item
 {
 	protected IIcon[] cz = new IIcon[16];

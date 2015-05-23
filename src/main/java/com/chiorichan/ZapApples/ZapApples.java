@@ -73,17 +73,29 @@ public class ZapApples
 	@SidedProxy( clientSide = "com.chiorichan.ZapApples.ClientProxy", serverSide = "com.chiorichan.ZapApples.CommonProxy" )
 	public static CommonProxy proxy;
 	
-	public static String[] icings = { "Black", "Red", "Green", "Chocolate", "Blue", "Purple", "Cyan", "Silver", "Gray", "Pink", "Lime", "Yellow", "Light Blue", "Magenta", "Orange", "Vanilla" };
+	/**
+	 * Configuration
+	 */
+	public static String[] icings = {"Black", "Red", "Green", "Chocolate", "Blue", "Purple", "Cyan", "Silver", "Gray", "Pink", "Lime", "Yellow", "Light Blue", "Magenta", "Orange", "Vanilla"};
 	public static boolean lightningEffect;
 	public static boolean spawnTimberWolves;
+	public static boolean playHowlSound;
 	public static List<Integer> disableZapAppleTreesInDimensions;
 	public static List<Integer> disableZapAppleTreesInBiomes;
+	
+	/**
+	 * Rendering
+	 */
 	public static int idRender2D;
 	public static int idRender3D;
 	public static int idRenderCake;
 	public static int idRenderPie;
 	public static int idRenderApple;
 	public static int bucketsPerJar = 6;
+	
+	/**
+	 * Blocks!
+	 */
 	public static BlockZapAppleLog zapAppleLog;
 	public static BlockZapAppleDeadLog zapAppleDeadLog;
 	public static BlockZapAppleLeaves zapAppleLeaves;
@@ -95,20 +107,29 @@ public class ZapApples
 	public static BlockZapApplePlanks zapPlanks;
 	public static BlockZapAppleWoodDoor blockZapWoodDoor;
 	public static BlockStoneDoor blockStoneDoor;
-	public static ItemZapAppleWoodDoor itemZapWoodDoor;
-	public static ItemStoneDoor itemStoneDoor;
 	public static BlockPie pie;
 	public static BlockCake cake;
 	public static BlockFlour flour;
-	public static Fluid zapAppleJam;
-	public static Fluid doughFluid;
 	public static BlockZapAppleJam zapAppleJamBlock;
 	public static BlockDoughFluid doughFluidBlock;
+	
+	/**
+	 * Items!
+	 */
 	public static ItemJamFood jamFood;
 	public static ItemZapAppleMushed zapAppleMushed;
 	public static ItemFluidBucket jamBucket;
 	public static ItemFluidBucket doughBucket;
 	public static ItemIcing icing;
+	
+	public static ItemZapAppleWoodDoor itemZapWoodDoor;
+	public static ItemStoneDoor itemStoneDoor;
+	
+	/**
+	 * Fluids!
+	 */
+	public static Fluid zapAppleJam;
+	public static Fluid doughFluid;
 	
 	@EventHandler
 	public void preInit( FMLPreInitializationEvent event )
@@ -125,12 +146,14 @@ public class ZapApples
 			bucketsPerJar = config.get( "general", "bucketsPerJar", 6 ).getInt( 6 );
 			
 			disableZapAppleTreesInDimensions = Lists.newArrayList();
-			for ( int i : config.get( "general", "disableZapAppleTreesInDimensions", new int[] { -1, 1 }, "Zap Apple Tree generation will be disabled in these dimensions" ).getIntList() )
+			for ( int i : config.get( "general", "disableZapAppleTreesInDimensions", new int[] {-1, 1}, "Zap Apple Tree generation will be disabled in these dimensions" ).getIntList() )
 				disableZapAppleTreesInDimensions.add( i );
 			
 			disableZapAppleTreesInBiomes = Lists.newArrayList();
-			for ( int i : config.get( "general", "disableZapAppleTreesInBiomes", new int[] { 0, 2, 8, 9, 10, 11, 12, 13, 17, 24, 35, 36, 37, 38, 39 }, "Zap Apple Tree generation will be disabled in these biomes. See http://minecraft.gamepedia.com/Biome for vanilla biome ids." ).getIntList() )
+			for ( int i : config.get( "general", "disableZapAppleTreesInBiomes", new int[] {0, 2, 8, 9, 10, 11, 12, 13, 17, 24, 35, 36, 37, 38, 39}, "Zap Apple Tree generation will be disabled in these biomes. See http://minecraft.gamepedia.com/Biome for vanilla biome ids." ).getIntList() )
 				disableZapAppleTreesInBiomes.add( i );
+			
+			playHowlSound = config.getBoolean( "playHowlSound", "general", true, "Toogles the Timber Wolf howl when Zap Apples begin to grow." );
 		}
 		catch ( Exception e )
 		{
@@ -244,25 +267,25 @@ public class ZapApples
 		
 		GameRegistry.registerWorldGenerator( new TreeGenerator(), 0 );
 		
-		GameRegistry.addRecipe( new ItemStack( jar ), new Object[] { " I ", "G G", " G ", Character.valueOf( 'I' ), Items.iron_ingot, Character.valueOf( 'G' ), Blocks.glass_pane } );
-		GameRegistry.addShapelessRecipe( new ItemStack( jamBucket, 1 ), new Object[] { Items.bucket, zapApple } );
-		GameRegistry.addShapelessRecipe( new ItemStack( zapPlanks, 4 ), new Object[] { new ItemStack( zapAppleLog ) } );
-		GameRegistry.addShapelessRecipe( new ItemStack( Blocks.planks, 4, 0 ), new Object[] { new ItemStack( zapAppleDeadLog ) } );
+		GameRegistry.addRecipe( new ItemStack( jar ), new Object[] {" I ", "G G", " G ", Character.valueOf( 'I' ), Items.iron_ingot, Character.valueOf( 'G' ), Blocks.glass_pane} );
+		GameRegistry.addShapelessRecipe( new ItemStack( jamBucket, 1 ), new Object[] {Items.bucket, zapApple} );
+		GameRegistry.addShapelessRecipe( new ItemStack( zapPlanks, 4 ), new Object[] {new ItemStack( zapAppleLog )} );
+		GameRegistry.addShapelessRecipe( new ItemStack( Blocks.planks, 4, 0 ), new Object[] {new ItemStack( zapAppleDeadLog )} );
 		
-		GameRegistry.addShapelessRecipe( new ItemStack( Items.dye, 1, 5 ), new Object[] { new ItemStack( zapPlanks ) } );
+		GameRegistry.addShapelessRecipe( new ItemStack( Items.dye, 1, 5 ), new Object[] {new ItemStack( zapPlanks )} );
 		
-		GameRegistry.addShapelessRecipe( new ItemStack( jamFood, 3, 0 ), new Object[] { new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( jamBucket, 1, 1 ) } );
+		GameRegistry.addShapelessRecipe( new ItemStack( jamFood, 3, 0 ), new Object[] {new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( Items.bread ), new ItemStack( jamBucket, 1, 1 )} );
 		
-		GameRegistry.addRecipe( new ItemStack( itemZapWoodDoor, 1 ), new Object[] { "WW ", "WW ", "WW ", Character.valueOf( 'W' ), zapPlanks } );
-		GameRegistry.addRecipe( new ItemStack( itemStoneDoor, 1 ), new Object[] { "SS ", "SS ", "SS ", Character.valueOf( 'S' ), Blocks.stone } );
+		GameRegistry.addRecipe( new ItemStack( itemZapWoodDoor, 1 ), new Object[] {"WW ", "WW ", "WW ", Character.valueOf( 'W' ), zapPlanks} );
+		GameRegistry.addRecipe( new ItemStack( itemStoneDoor, 1 ), new Object[] {"SS ", "SS ", "SS ", Character.valueOf( 'S' ), Blocks.stone} );
 		
-		GameRegistry.addRecipe( new ItemStack( cake, 1 ), new Object[] { " M ", "WWW", Character.valueOf( 'M' ), Items.milk_bucket, Character.valueOf( 'W' ), Items.wheat } );
-		GameRegistry.addRecipe( new ItemStack( icing, 1, 15 ), new Object[] { "   ", "SMS", "   ", Character.valueOf( 'S' ), Items.sugar, Character.valueOf( 'M' ), Items.milk_bucket } );
+		GameRegistry.addRecipe( new ItemStack( cake, 1 ), new Object[] {" M ", "WWW", Character.valueOf( 'M' ), Items.milk_bucket, Character.valueOf( 'W' ), Items.wheat} );
+		GameRegistry.addRecipe( new ItemStack( icing, 1, 15 ), new Object[] {"   ", "SMS", "   ", Character.valueOf( 'S' ), Items.sugar, Character.valueOf( 'M' ), Items.milk_bucket} );
 		
 		for ( int i = 0; i < 16; i++ )
 		{
-			GameRegistry.addShapelessRecipe( new ItemStack( icing, 1, i ), new Object[] { new ItemStack( Items.dye, 1, i ), new ItemStack( icing, 1, 15 ) } );
-			GameRegistry.addShapelessRecipe( new ItemStack( icing, 1, 15 ), new Object[] { new ItemStack( Items.dye, 1, 15 ), new ItemStack( icing, 1, i ) } );
+			GameRegistry.addShapelessRecipe( new ItemStack( icing, 1, i ), new Object[] {new ItemStack( Items.dye, 1, i ), new ItemStack( icing, 1, 15 )} );
+			GameRegistry.addShapelessRecipe( new ItemStack( icing, 1, 15 ), new Object[] {new ItemStack( Items.dye, 1, 15 ), new ItemStack( icing, 1, i )} );
 		}
 	}
 	

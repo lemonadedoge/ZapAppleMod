@@ -35,20 +35,23 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 		setHardness( 0.2F );
 		setLightOpacity( 1 );
 		setStepSound( Block.soundTypeGrass );
-		setBlockName("zapAppleLeaves");
+		setBlockName( "zapAppleLeaves" );
 	}
 	
+	@Override
 	public IIcon getIcon( int side, int meta )
 	{
 		return icon;
 	}
 	
+	@Override
 	@SideOnly( Side.CLIENT )
 	public void registerBlockIcons( IIconRegister register )
 	{
 		icon = register.registerIcon( "zapapples:zapapple_leaves" );
 	}
 	
+	@Override
 	public Item getItemDropped( int par1, Random par2Random, int par3 )
 	{
 		return ZapApples.zapAppleSapling.getItemDropped( par1, par2Random, par3 );
@@ -65,7 +68,8 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 		}
 	}
 	
-	public void breakBlock( World world, int x, int y, int z, int side, int meta )
+	@Override
+	public void breakBlock( World world, int x, int y, int z, Block block, int meta )
 	{
 		byte var7 = 1;
 		int var8 = var7 + 1;
@@ -88,6 +92,7 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 		}
 	}
 	
+	@Override
 	public void updateTick( World world, int x, int y, int z, Random rand )
 	{
 		if ( !world.isRemote )
@@ -119,15 +124,15 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 								
 								if ( ( block != null ) && ( block.canSustainLeaves( world, x + var12, y + var13, z + var14 ) ) )
 								{
-									adjacentTreeBlocks[( ( var12 + var11 ) * var10 + ( var13 + var11 ) * var9 + var14 + var11 )] = 0;
+									adjacentTreeBlocks[ ( ( var12 + var11 ) * var10 + ( var13 + var11 ) * var9 + var14 + var11 )] = 0;
 								}
 								else if ( ( block != null ) && ( block.isLeaves( world, x + var12, y + var13, z + var14 ) ) )
 								{
-									adjacentTreeBlocks[( ( var12 + var11 ) * var10 + ( var13 + var11 ) * var9 + var14 + var11 )] = -2;
+									adjacentTreeBlocks[ ( ( var12 + var11 ) * var10 + ( var13 + var11 ) * var9 + var14 + var11 )] = -2;
 								}
 								else
 								{
-									adjacentTreeBlocks[( ( var12 + var11 ) * var10 + ( var13 + var11 ) * var9 + var14 + var11 )] = -1;
+									adjacentTreeBlocks[ ( ( var12 + var11 ) * var10 + ( var13 + var11 ) * var9 + var14 + var11 )] = -1;
 								}
 							}
 						}
@@ -141,36 +146,36 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 							{
 								for ( int var15 = -var7; var15 <= var7; var15++ )
 								{
-									if ( adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] == var12 - 1 )
+									if ( adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] == var12 - 1 )
 									{
-										if ( adjacentTreeBlocks[( ( var13 + var11 - 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] == -2 )
+										if ( adjacentTreeBlocks[ ( ( var13 + var11 - 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] == -2 )
 										{
-											adjacentTreeBlocks[( ( var13 + var11 - 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] = var12;
+											adjacentTreeBlocks[ ( ( var13 + var11 - 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] = var12;
 										}
 										
-										if ( adjacentTreeBlocks[( ( var13 + var11 + 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] == -2 )
+										if ( adjacentTreeBlocks[ ( ( var13 + var11 + 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] == -2 )
 										{
-											adjacentTreeBlocks[( ( var13 + var11 + 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] = var12;
+											adjacentTreeBlocks[ ( ( var13 + var11 + 1 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 )] = var12;
 										}
 										
-										if ( adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 - 1 ) * var9 + var15 + var11 )] == -2 )
+										if ( adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 - 1 ) * var9 + var15 + var11 )] == -2 )
 										{
-											adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 - 1 ) * var9 + var15 + var11 )] = var12;
+											adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 - 1 ) * var9 + var15 + var11 )] = var12;
 										}
 										
-										if ( adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 + 1 ) * var9 + var15 + var11 )] == -2 )
+										if ( adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 + 1 ) * var9 + var15 + var11 )] == -2 )
 										{
-											adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 + 1 ) * var9 + var15 + var11 )] = var12;
+											adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 + 1 ) * var9 + var15 + var11 )] = var12;
 										}
 										
-										if ( adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + ( var15 + var11 - 1 ) )] == -2 )
+										if ( adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + ( var15 + var11 - 1 ) )] == -2 )
 										{
-											adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + ( var15 + var11 - 1 ) )] = var12;
+											adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + ( var15 + var11 - 1 ) )] = var12;
 										}
 										
-										if ( adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 + 1 )] == -2 )
+										if ( adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 + 1 )] == -2 )
 										{
-											adjacentTreeBlocks[( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 + 1 )] = var12;
+											adjacentTreeBlocks[ ( ( var13 + var11 ) * var10 + ( var14 + var11 ) * var9 + var15 + var11 + 1 )] = var12;
 										}
 									}
 								}
@@ -179,7 +184,7 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 					}
 				}
 				
-				int var12 = adjacentTreeBlocks[( var11 * var10 + var11 * var9 + var11 )];
+				int var12 = adjacentTreeBlocks[ ( var11 * var10 + var11 * var9 + var11 )];
 				
 				if ( var12 >= 0 )
 				{
@@ -196,19 +201,16 @@ public class BlockZapAppleLeaves extends Block implements IShearable
 		world.setBlockToAir( x, y, z );
 	}
 	
+	@Override
 	public int quantityDropped( Random rand )
 	{
 		return rand.nextInt( 60 ) == 0 ? 1 : 0;
 	}
 	
+	@Override
 	public boolean isOpaqueCube()
 	{
 		return false;
-	}
-	
-	public boolean isLeaves( World world, int x, int y, int z )
-	{
-		return true;
 	}
 	
 	@Override

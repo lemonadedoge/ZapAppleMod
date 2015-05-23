@@ -3,7 +3,6 @@ package com.chiorichan.ZapApples.network.packet.client;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
 public class SendEffectsPacket implements IMessage
