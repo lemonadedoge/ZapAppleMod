@@ -6,9 +6,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -118,11 +121,13 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 		}
 	}
 	
+	@Override
 	public void onBlockPreDestroy( World world, int x, int y, int z, int i )
 	{
 		// Called before block is removed, no matter by who or what.
 	}
 	
+	@Override
 	public void onBlockHarvested( World world, int x, int y, int z, int i, EntityPlayer player )
 	{
 		// Hmm? How is this different from PreDestroy?
@@ -132,11 +137,43 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 		
 		if ( _tile != null && _tile instanceof TileEntityZapAppleLog )
 		{
-			TileEntityZapAppleLog tile = (TileEntityZapAppleLog) _tile;
+			TileEntityZapAppleLog tile = ( TileEntityZapAppleLog ) _tile;
 			tile.notifyRemoval();
 		}
 	}
 	
+	@Override
+	public boolean onBlockActivated( World worldObj, int x, int y, int z, EntityPlayer entity, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_ )
+	{
+		if ( !worldObj.isRemote && entity.isWet() )
+			worldObj.addWeatherEffect( new EntityLightningBolt( worldObj, entity.posX, entity.posY, entity.posZ ) );
+		
+		if ( !worldObj.isRemote && entity.capabilities.isCreativeMode )
+		{
+			TileEntity tile0 = worldObj.getTileEntity( x, y, z );
+			if ( tile0 == null || ! ( tile0 instanceof TileEntityZapAppleLog ) )
+			{
+				entity.addChatMessage( new ChatComponentText( EnumChatFormatting.RED + "We could not find a TileEntity at " + x + ", " + y + ", " + z + "." ) );
+				entity.addChatMessage( new ChatComponentText( EnumChatFormatting.GOLD + "Be sure your clicking the absolute tree base." ) );
+			}
+			else
+			{
+				TileEntityZapAppleLog tile = ( TileEntityZapAppleLog ) tile0;
+				
+				entity.addChatMessage( new ChatComponentText( EnumChatFormatting.GOLD + "Zap Apple Log TileEntity at " + x + ", " + y + ", " + z + " debug: " ) );
+				entity.addChatMessage( new ChatComponentText( "Day: " + tile.day ) );
+				entity.addChatMessage( new ChatComponentText( "Apples: " + tile.applePositions.size() ) );
+				entity.addChatMessage( new ChatComponentText( "Leaves: " + tile.leafPositions.size() ) );
+				entity.addChatMessage( new ChatComponentText( "Logs: " + tile.logPositions.size() ) );
+				for ( int i = 1; i < 6; i++ )
+					entity.addChatMessage( new ChatComponentText( "Phase " + i + " (" + TileEntityZapAppleLog.phaseDesc( i ) + "): " + tile.index[i] + "/" + tile.indexMax[i] + " " + ( tile.phase( i ) ? EnumChatFormatting.GREEN + "Ticking" : ( tile.finished[i] ? EnumChatFormatting.BLUE + "Finished" : EnumChatFormatting.YELLOW + "Pending" ) ) ) );
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
 	public void onBlockDestroyedByPlayer( World world, int x, int y, int z, int i )
 	{
 		
@@ -163,7 +200,7 @@ public class BlockZapAppleLog extends BlockRotatedPillerContainer
 	@Override
 	public TileEntity createNewTileEntity( World world, int i )
 	{
-		// return new TileEntityZapAppleLog(); // Tile Entity is set by the tree generator. Too many entities lags peoples games.
+		// return new TileEntityZapAppleLog(); // Tile Entity is set by the tree generator. Too many entities lag games.
 		return null;
 	}
 }
