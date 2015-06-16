@@ -8,6 +8,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.chiorichan.ZapApples.entity.EntityMeteor;
+import com.chiorichan.ZapApples.entity.EntityMeteorHeadFX;
 import com.chiorichan.ZapApples.entity.EntityZapApple;
 import com.chiorichan.ZapApples.events.GeneralEventHandler;
 import com.chiorichan.ZapApples.events.SoundHandler;
@@ -27,6 +28,7 @@ import com.chiorichan.ZapApples.tileentity.TileEntityPie;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.common.registry.EntityRegistry;
 
 public class ClientProxy extends CommonProxy
 {
@@ -34,6 +36,8 @@ public class ClientProxy extends CommonProxy
 	public void registerRenderers()
 	{
 		super.registerRenderers();
+		
+		EntityRegistry.registerModEntity( EntityMeteorHeadFX.class, "MeteorHead", ZapApples.id++, this, 80, 3, true );
 		
 		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.cake ).getItem(), new RenderCakeItem() );
 		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.jar ).getItem(), new RenderJarItem() );

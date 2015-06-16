@@ -34,7 +34,6 @@ import com.chiorichan.ZapApples.blocks.BlockZapApplePlanks;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleSapling;
 import com.chiorichan.ZapApples.blocks.BlockZapAppleWoodDoor;
 import com.chiorichan.ZapApples.entity.EntityMeteor;
-import com.chiorichan.ZapApples.entity.EntityMeteorHeadFX;
 import com.chiorichan.ZapApples.entity.EntityZapApple;
 import com.chiorichan.ZapApples.items.ItemCake;
 import com.chiorichan.ZapApples.items.ItemFluidBucket;
@@ -65,7 +64,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod( modid = ZapApples.MOD_ID, name = "Zap Apple Mod", version = "1.7.10-2.3alpha" )
+@Mod( modid = ZapApples.MOD_ID, name = "Zap Apple Mod", version = "1.7.10-2.4.1beta" )
 public class ZapApples
 {
 	public static final String MOD_ID = "zapapples";
@@ -96,6 +95,8 @@ public class ZapApples
 	public static int idRenderPie;
 	public static int idRenderApple;
 	public static int bucketsPerJar = 6;
+	
+	public static int id = EntityRegistry.findGlobalUniqueEntityId();
 	
 	/**
 	 * Blocks!
@@ -187,20 +188,15 @@ public class ZapApples
 		cake = new BlockCake();
 		flour = new BlockFlour();
 		
-		int id = EntityRegistry.findGlobalUniqueEntityId();
-		
 		EntityRegistry.registerModEntity( EntityTimberWolf.class, "timberwolf", id++, this, 80, 3, true );
+		
+		EntityRegistry.registerModEntity( EntityZapApple.class, "ZapApple", id++, this, 80, 3, true );
+		EntityRegistry.registerModEntity( EntityMeteor.class, "Meteor", id++, this, 80, 3, true );
 		
 		if ( spawnTimberWolves )
 			for ( int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++ )
 				if ( BiomeGenBase.getBiomeGenArray()[i] != null )
 					EntityRegistry.addSpawn( EntityTimberWolf.class, 6, 1, 3, EnumCreatureType.monster, BiomeGenBase.getBiomeGenArray()[i] );
-		
-		EntityRegistry.registerModEntity( EntityZapApple.class, "ZapApple", id++, this, 80, 3, true );
-		
-		EntityRegistry.registerModEntity( EntityMeteor.class, "Meteor", id++, this, 80, 3, true );
-		
-		EntityRegistry.registerModEntity( EntityMeteorHeadFX.class, "MeteorHead", id++, this, 80, 3, true );
 		
 		doughFluid = new Fluid( "dough" );
 		doughFluid.setLuminosity( 1 );
