@@ -14,3 +14,6 @@ config/
 /usernamecache.json
 /asm
 /mods
+/build
+/natives
+/servers.dat

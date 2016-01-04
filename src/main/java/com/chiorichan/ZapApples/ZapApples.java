@@ -193,6 +193,8 @@ public class ZapApples
 		EntityRegistry.registerModEntity( EntityZapApple.class, "ZapApple", id++, this, 80, 3, true );
 		EntityRegistry.registerModEntity( EntityMeteor.class, "Meteor", id++, this, 80, 3, true );
 		
+		proxy.registerEffects();
+		
 		if ( spawnTimberWolves )
 			for ( int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++ )
 				if ( BiomeGenBase.getBiomeGenArray()[i] != null )

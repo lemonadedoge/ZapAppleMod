@@ -37,8 +37,6 @@ public class ClientProxy extends CommonProxy
 	{
 		super.registerRenderers();
 		
-		EntityRegistry.registerModEntity( EntityMeteorHeadFX.class, "MeteorHead", ZapApples.id++, this, 80, 3, true );
-		
 		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.cake ).getItem(), new RenderCakeItem() );
 		MinecraftForgeClient.registerItemRenderer( new ItemStack( ZapApples.jar ).getItem(), new RenderJarItem() );
 		
@@ -55,6 +53,12 @@ public class ClientProxy extends CommonProxy
 		new Render3D();
 		new RenderApple();
 		new RenderCake();
+	}
+	
+	@Override
+	public void registerEffects()
+	{
+		EntityRegistry.registerModEntity( EntityMeteorHeadFX.class, "MeteorHead", ZapApples.id++, ZapApples.instance, 80, 3, true );
 	}
 	
 	@Override

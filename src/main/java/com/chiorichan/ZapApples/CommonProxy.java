@@ -17,6 +17,11 @@ public class CommonProxy implements IGuiHandler
 		MinecraftForge.EVENT_BUS.register( new BonemealHandler() );
 	}
 	
+	public void registerEffects()
+	{
+		
+	}
+	
 	public int addArmor( String string )
 	{
 		return 0;
