@@ -151,11 +151,11 @@ public class ZapApples
 			bucketsPerJar = config.get( "general", "bucketsPerJar", 6 ).getInt( 6 );
 			
 			disableZapAppleTreesInDimensions = Lists.newArrayList();
-			for ( int i : config.get( "general", "disableZapAppleTreesInDimensions", new int[] {-1, 1}, "Zap Apple Tree generation will be disabled in these dimensions" ).getIntList() )
+			for ( int i : config.get( "general", "disableZapAppleTreesInDimensions", new int[] {1}, "Zap Apple Tree generation will be disabled in these dimensions" ).getIntList() )
 				disableZapAppleTreesInDimensions.add( i );
 			
 			disableZapAppleTreesInBiomes = Lists.newArrayList();
-			for ( int i : config.get( "general", "disableZapAppleTreesInBiomes", new int[] {0, 2, 8, 9, 10, 11, 12, 13, 17, 24, 35, 36, 37, 38, 39}, "Zap Apple Tree generation will be disabled in these biomes. See http://minecraft.gamepedia.com/Biome for vanilla biome ids." ).getIntList() )
+			for ( int i : config.get( "general", "disableZapAppleTreesInBiomes", new int[] {0, 2, 9, 10, 11, 17, 24, 35, 36, 37, 38, 39}, "Zap Apple Tree generation will be disabled in these biomes. See http://minecraft.gamepedia.com/Biome for vanilla biome ids." ).getIntList() )
 				disableZapAppleTreesInBiomes.add( i );
 			
 			playHowlSound = config.getBoolean( "playHowlSound", "general", true, "Toogles the Timber Wolf howl when Zap Apples begin to grow." );
